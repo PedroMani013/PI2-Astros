@@ -1,3 +1,8 @@
+<?php
+session_start();
+require_once 'conexao.php';
+?>
+
 <!DOCTYPE html>
 <html lang="pt-br">
 
@@ -17,19 +22,32 @@
             <img src="images/cps.png" alt="Logo Cps" class="logotop">
         </header>
         <main class="formmain">
+            <?php
+                if (isset($_SESSION['erro_votacao'])) {
+                    echo "<div class='erro'><span>".$_SESSION['erro_votacao']."</span></div>";
+                    unset($_SESSION['erro_votacao']);
+                }
+
+                if (isset($_SESSION['sucesso_votacao'])) {
+                    echo "<div class='sucesso'><span>".$_SESSION['sucesso_votacao']."</span></div>";
+                    unset($_SESSION['sucesso_votacao']);
+                }
+            ?>
             <div id="formbox">
                 <h2>Criar Votação</h2>
-                <form action="paineladministrativo.php" method="post">
+                <form action="processa_votacao.php" method="post">
                     <label for="curso">Selecione o curso que a votação será realizada</label><br>
-                    <select name="Curso candidatado">
+                    <select name="curso">
                         <option value="0">Curso...</option>
-                        <option value="DSM">Desenvolvimento de software multiplataforma</option>
-                        <option value="GPI">Gestão De Produção Industrial</option>
-                        <option value="GE">Gestão Empresarial</option>
-                        <option value="all">Selecionar todos</option>
+                        <option value="Desenvolvimento de software multiplataforma">
+                            Desenvolvimento de software multiplataforma</option>
+                        <option value="Gestão de produção industrial">
+                            Gestão De Produção Industrial</option>
+                        <option value="Gestão empresarial">
+                            Gestão Empresarial</option>
                     </select><br>
                     <label for="semestre">Selecione o semestre que a votação será realizada</label><br>
-                    <select name="Curso candidatado">
+                    <select name="semestre">
                         <option value="0">Semestre...</option>
                         <option value="1">1º Semestre</option>
                         <option value="2">2º Semestre</option>
@@ -37,12 +55,13 @@
                         <option value="4">4º Semestre</option>
                         <option value="5">5º Semestre</option>
                         <option value="6">6º Semestre</option>
-                        <option value="all">Selecionar todos</option>
                     </select><br>
                     <label for="datacandidatura">Informe a data para candidatura:</label><br>
                     <input type="date" name="datacand" id=""><br>
-                    <label for="datacandidatura">Informe a data de inicio da votação:</label><br>
+                    <label for="datainicio">Informe a data de inicio da votação:</label><br>
                     <input type="date" name="datainicio" id=""><br>
+                    <label for="datafim">Informe a data de encerramento da votação:</label><br>
+                    <input type="date" name="datafim" id=""><br>
                     <input type="submit" class="criarvot" value="Enviar Formulário"><br>
                 </form>
                 </div>

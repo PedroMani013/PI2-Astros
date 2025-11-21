@@ -204,7 +204,7 @@ main {
 
 .loginbody input[type="submit"]{
     margin: 3px auto;
-    width: 100%;
+    width: 103%;
     padding: 5px 10px;
     height: 5vh;
     font-size: 2.5vh;
@@ -847,5 +847,33 @@ main {
     font-size: 1.1rem;
     color: #333;
     gap: 1vh;
+}
+
+/* Erro/sucesso de cadastro/login */
+
+.erro{
+    color: #a32024;
+    background-color: #EDC5C6;
+    padding: 3vh;
+    border: 2px solid #a32024;
+    border-radius: 1.2vh;
+    margin: 2vh 0;
+}
+
+.erro span{
+    font-size: 1.2rem;
+}
+
+.sucesso{
+    color: #0c5808;
+    background-color: #6eb470;
+    padding: 3vh;
+    border: 2px solid #0c5808;
+    border-radius: 1.2vh;
+    margin: 2vh 0;
+}
+
+.sucesso span{
+    font-size: 1.2rem;
 }
 

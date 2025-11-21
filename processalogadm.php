@@ -22,7 +22,7 @@ if (isset($_POST['email'], $_POST['password'])) {
         if ($admin && $senha === $admin['senha']) {
             // Login bem-sucedido
             $_SESSION['admin'] = [
-                'idaluno' => $admin['idadmin'],
+                'idadmin' => $admin['idadmin'],
                 'nome' => $admin['nome']
             ];
             header('Location: paineladministrativo.php');
