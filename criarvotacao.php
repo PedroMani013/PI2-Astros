@@ -19,13 +19,29 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     if ($curso === '' || $semestre <= 0 || $data_inicio === '' || $data_candidatura === '' || $data_final === '') {
         $erro = "Preencha todos os campos.";
     } else {
-        $stmt = $pdo->prepare("INSERT INTO tb_votacoes (curso, semestre, data_inicio, data_candidatura, data_final, idadmin) VALUES (?, ?, ?, ?, ?, ?)");
+        $stmt = $pdo->prepare("INSERT INTO tb_votacoes 
+        (curso, semestre, data_inicio, data_candidatura, data_final, idadmin) 
+        VALUES (?, ?, ?, ?, ?, ?)");
+
         if ($stmt->execute([$curso, $semestre, $data_inicio, $data_candidatura, $data_final, $_SESSION['admin']['idadmin']])) {
-            header('Location: paineladministrativo.php');
-            exit;
-        } else {
-            $erro = "Erro ao criar votação.";
-        }
+
+        // 1. Pegar o id da votação criada
+        $idvotacao = $pdo->lastInsertId();
+
+        // 2. Atualizar todos os alunos do mesmo curso/semestre
+        $sqlUpdate = "UPDATE tb_alunos 
+                    SET idvotacao = ? 
+                    WHERE curso = ? AND semestre = ?";
+                    
+        $stmtUpdate = $pdo->prepare($sqlUpdate);
+        $stmtUpdate->execute([$idvotacao, $curso, $semestre]);
+
+        header('Location: paineladministrativo.php');
+        exit;
+    } else {
+        $erro = "Erro ao criar votação.";
+    }
+
     }
 }
 ?>
@@ -53,11 +69,11 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 <label>Curso</label>
                     <select name="curso">
                         <option value="0">Curso...</option>
-                        <option value="Desenvolvimento de software multiplataforma">
+                        <option value="Desenvolvimento de Software Multiplataforma">
                             Desenvolvimento de software multiplataforma</option>
-                        <option value="Gestão de produção industrial">
+                        <option value="Gestão de Produção Industrial">
                             Gestão de produção industrial</option>
-                        <option value="Gestão empresarial">
+                        <option value="Gestão Empresarial">
                             Gestão empresarial</option>
                     </select>
 

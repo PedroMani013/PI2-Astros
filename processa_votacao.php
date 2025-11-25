@@ -61,37 +61,50 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
     if (empty($erros)) {
         try {
-            $curso = $_POST['curso'];
-            $semestre = $_POST['semestre'];
+        $curso = $_POST['curso'];
+        $semestre = $_POST['semestre'];
 
-            // Datas em formato datetime
-            $datacand = $_POST['datacand'] . " 00:00:00";
-            $datainicio = $_POST['datainicio'] . " 08:00:00";
-            $datafim = $_POST['datafim'] . " 23:59:59";
+        // Datas em formato datetime
+        $datacand = $_POST['datacand'] . " 00:00:00";
+        $datainicio = $_POST['datainicio'] . " 00:00:00";
+        $datafim = $_POST['datafim'] . " 23:59:59";
 
-            $sql = "INSERT INTO tb_votacoes 
-                    (curso, semestre, data_inicio, data_candidatura, data_final, idadmin)
-                    VALUES (?, ?, ?, ?, ?, ?)";
+        // 1) Criar a votação
+        $sql = "INSERT INTO tb_votacoes 
+                (curso, semestre, data_inicio, data_candidatura, data_final, idadmin)
+                VALUES (?, ?, ?, ?, ?, ?)";
 
-            $stmt = $pdo->prepare($sql);
-            $stmt->execute([
-                $curso,
-                $semestre,
-                $datainicio,
-                $datacand,
-                $datafim,
-                $idadmin
-            ]);
+        $stmt = $pdo->prepare($sql);
+        $stmt->execute([
+            $curso,
+            $semestre,
+            $datainicio,
+            $datacand,
+            $datafim,
+            $idadmin
+        ]);
 
-            $_SESSION['sucesso_votacao'] = "Votação criada com sucesso!";
-            header("Location: paineladministrativo.php");
-            exit;
+        // 2) Recuperar id da votacao criada
+        $idvotacao = $pdo->lastInsertId();
 
-        } catch (PDOException $e) {
-            $_SESSION['erro_votacao'] = "Erro ao criar votação!";
-            header("Location: criarvotacao.php");
-            exit;
-        }
+        // 3) Atualizar alunos que pertencem a esse curso/semestre
+        $sqlUpdate = "UPDATE tb_alunos 
+                    SET idvotacao = ? 
+                    WHERE curso = ? AND semestre = ?";
+
+        $stmtUpdate = $pdo->prepare($sqlUpdate);
+        $stmtUpdate->execute([$idvotacao, $curso, $semestre]);
+
+        $_SESSION['sucesso_votacao'] = "Votação criada e alunos atribuídos com sucesso!";
+        header("Location: paineladministrativo.php");
+        exit;
+
+    } catch (PDOException $e) {
+        $_SESSION['erro_votacao'] = "Erro ao criar votação!";
+        header("Location: criarvotacao.php");
+        exit;
+    }
+
 
     } else {
         // Junta os erros e envia de volta
