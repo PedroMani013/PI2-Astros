@@ -26,13 +26,13 @@ $votacoes = $stmt->fetchAll(PDO::FETCH_ASSOC);
 <div id="tudo">
     <header class="topo">
         <img src="images/fatec.png" alt="Logo FATEC" class="logotop">
-        <h1>Painel Administrativo</h1>
+        <h1>Votação para representante de sala</h1>
         <img src="images/cps.png" alt="Logo Cps" class="logotop">
     </header>
 
-    <main>
-        
-
+    <main class="index">
+        <div class="boxpadrao">
+        <h1 class="headpaineladm">PAINEL ADMINISTRATIVO</h1>
         <?php foreach ($votacoes as $v): ?>
             <div class="votacaoadm">
                 <div class="infovotacaoadm">
@@ -54,6 +54,7 @@ $votacoes = $stmt->fetchAll(PDO::FETCH_ASSOC);
         </div>
         <div class="finalizarsessao" style="margin:3vh auto;">
             <a href="logout.php"><img src="images/log-out.png" alt=""> <p>Sair</p></a>
+        </div>
         </div>
     </main>
 
