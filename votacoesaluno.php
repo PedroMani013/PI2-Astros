@@ -40,6 +40,7 @@ $nome_aluno = $_SESSION['aluno']['nome'];
                         <p>Semestre: <?php?></p>
                         <p>Data para candidatura: <?php?></p>
                         <p>Data de inicio da votação: <?php?></p>
+                        <p>Data de encerramento: <?php?></p>
                         <p>Candidatos: <?php?></p>
                         <div class="botaocaixavotacao">
                             <a href="candidatura.php">Candidatar</a>
