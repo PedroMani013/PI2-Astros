@@ -1,70 +1,66 @@
-
 <?php
 session_start();
+require_once 'conexao.php';
+date_default_timezone_set('America/Sao_Paulo');
 
-// Verificar se o usuário está logado
 if (!isset($_SESSION['admin'])) {
     header('Location: logadm.php');
     exit;
 }
 
-$nome_admin = $_SESSION['admin']['nome'];
-?>
+$idadmin = (int)$_SESSION['admin']['idadmin'];
 
+// busca votações (pode filtrar por admin se preferir)
+$stmt = $pdo->prepare("SELECT * FROM tb_votacoes ORDER BY data_inicio DESC");
+$stmt->execute();
+$votacoes = $stmt->fetchAll(PDO::FETCH_ASSOC);
+?>
 <!DOCTYPE html>
 <html lang="pt-br">
-
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>ASTROS - Sistema De Votação</title>
-    <link rel="shortcut icon" href="images/astros.png">
+    <meta charset="utf-8">
+    <title>Painel Administrativo</title>
     <link rel="stylesheet" href="style.css">
 </head>
-
 <body>
-    <div id="tudo">
-        <header class="topo">
-            <img src="images/fatec.png" alt="Logo FATEC" class="logotop">
-            <h1>Votação Para Representante de Sala</h1>
-            <img src="images/cps.png" alt="Logo Cps" class="logotop">
-        </header>
-        <main class="index">
-            <div class="boxpadrao">
-                <h1 class="headpaineladm">PAINEL ADMINISTRATIVO</h1>
-                <div class="votacaoadm">
-                    <div class="infovotacaoadm">
-                        <p>Curso: <?php?></p>
-                        <p>Semestre: <?php?></p>
-                        <p>Data de candidatura: <?php?></p>
-                        <p>Data de inicio: <?php?></p>
-                        <p>Número de candidatos: <?php?></p>
-                    </div>
-                    <div class="botoesvotoadm">
-                        <a href="administracaocandidatos.php">Administrar Candidatos</a>
-                        <a href="votosadm.php">Visualizar Votos</a>
-                    </div>
-                </div>
-                <div class="criarvot">
-                    <a href="criarvotacao.php">
-                        <img src="images/addvotacao.png" alt="">
-                        <h3>Criar Votação</h3>
-                    </a>
-                </div>
-                <div class="finalizarsessao">
-                    <a href="logout.php">
-                        <img src="images/log-out.png" alt="">
-                        <p>Finalizar Sessão</p>
-                    </a>
-                    
-                </div>
-            </div>
-        </main>
-        <footer class="rodape">
-            <img src="images/govsp.png" alt="" class="logosp">
-            <img src="images/astros.png" alt="" class="logobottom">
-        </footer>
-    </div>
-</body>
+<div id="tudo">
+    <header class="topo">
+        <img src="images/fatec.png" alt="Logo FATEC" class="logotop">
+        <h1>Painel Administrativo</h1>
+        <img src="images/cps.png" alt="Logo Cps" class="logotop">
+    </header>
 
+    <main>
+        
+
+        <?php foreach ($votacoes as $v): ?>
+            <div class="votacaoadm">
+                <div class="infovotacaoadm">
+                    <strong><?= htmlspecialchars($v['curso']) ?></strong>
+                    <span>Semestre: <?= htmlspecialchars($v['semestre']) ?></span>
+                    <span>Candidatura: <?= (new DateTime($v['data_candidatura']))->format('d/m/Y H:i') ?></span>
+                    <span>Votação: <?= (new DateTime($v['data_inicio']))->format('d/m/Y H:i') ?> até <?= (new DateTime($v['data_final']))->format('d/m/Y H:i') ?></span>
+                </div>
+
+                <div class="botoesvotoadm">
+                    <a href="ver_candidatos.php?idvotacao=<?= (int)$v['idvotacao'] ?>">Ver candidatos</a>
+                    <a href="apurar_votos.php?idvotacao=<?= (int)$v['idvotacao'] ?>">Apurar votos</a>
+                </div>
+                
+            </div>
+        <?php endforeach; ?>
+        <div class="criarvot">
+            <a href="criarvotacao.php" class="botoesvotoadm"><div class="criavot"><img src="images/addvotacao.png" alt=""><p>Criar nova votação</p></div></a>
+        </div>
+        <div class="finalizarsessao" style="margin:3vh auto;">
+            <a href="logout.php"><img src="images/log-out.png" alt=""> <p>Sair</p></a>
+        </div>
+    </main>
+
+    <footer class="rodape">
+        <img src="images/govsp.png" alt="" class="logosp">
+        <img src="images/astros.png" alt="" class="logobottom">
+    </footer>
+</div>
+</body>
 </html>

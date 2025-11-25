@@ -413,7 +413,7 @@ main {
 }
 
 .criavot img{
-    width: 20vh;
+    width: 10vh;
 }
 
 /* Formulário Candidatura e criação de votação */
@@ -446,7 +446,7 @@ main {
     margin: 30px auto;
 }
 
-#formbox input[type="text"], input[type="email"], input[type="date"], select{
+#formbox input[type="text"], input[type="email"], input[type="date"], input[type="number"], select{
     display:flex;
     align-items:center;
     width: 100%;

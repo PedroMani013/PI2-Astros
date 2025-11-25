@@ -1,63 +1,96 @@
+<?php
+session_start();
+require_once 'conexao.php';
+date_default_timezone_set('America/Sao_Paulo');
+
+if (!isset($_SESSION['aluno'])) {
+    header('Location: logaluno.php');
+    exit;
+}
+
+$idaluno = (int)$_SESSION['aluno']['idaluno'];
+
+if (!isset($_GET['idvotacao'])) {
+    die("Votação inválida.");
+}
+$idvotacao = (int)$_GET['idvotacao'];
+
+// busca votação
+$stmt = $pdo->prepare("SELECT data_candidatura, data_inicio, curso FROM tb_votacoes WHERE idvotacao = ?");
+$stmt->execute([$idvotacao]);
+$vot = $stmt->fetch();
+if (!$vot) die("Votação não encontrada.");
+
+// verifica período de candidatura
+$agora = new DateTime();
+$dataCandidatura = new DateTime($vot['data_candidatura']);
+$dataInicio = new DateTime($vot['data_inicio']);
+
+if (!($agora >= $dataCandidatura && $agora < $dataInicio)) {
+    die("Fora do período de candidatura.");
+}
+
+// busca aluno
+$stmt = $pdo->prepare("SELECT nome, email, ra FROM tb_alunos WHERE idaluno = ?");
+$stmt->execute([$idaluno]);
+$aluno = $stmt->fetch();
+if (!$aluno) die("Aluno não encontrado.");
+
+// checa já candidato
+$stmt = $pdo->prepare("SELECT COUNT(*) as total FROM tb_candidatos WHERE ra = ? AND idvotacao = ?");
+$stmt->execute([$aluno['ra'], $idvotacao]);
+if ((int)$stmt->fetch()['total'] > 0) {
+    die("Você já está inscrito como candidato nesta votação.");
+}
+?>
 <!DOCTYPE html>
 <html lang="pt-br">
-
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>ASTROS - Sistema De Votação</title>
-    <link rel="shortcut icon" href="images/astros.png">
+    <meta charset="utf-8">
+    <title>Candidatura</title>
     <link rel="stylesheet" href="style.css">
 </head>
-
 <body>
-    <div id="tudo">
-        <header class="topo">
-            <img src="images/fatec.png" alt="Logo FATEC" class="logotop">
-            <h1>Votação Para Representante de Sala</h1>
-            <img src="images/cps.png" alt="Logo Cps" class="logotop">
-        </header>
-        <main class="formmain">
-            <div id="formbox">
-                <h2>Realizar Candidatura</h2>
-                <form action="popupcandidatura.php" method="post">
-                    <label for="nome">Informe seu nome completo:</label><br>
-                    <input type="text" name="nomecandidato" placeholder="Nome Completo"><br>
-                    <label for="nome">Informe seu registro acadêmico:</label><br>
-                    <input type="text" name="RA" placeholder="ex: 2781392513000"><br>
-                    <label for="nome">Informe seu e-mail fatec:</label><br>
-                    <input type="text" name="email" placeholder="@fatec.sp.gov.br"><br>
-                    <div class="upload">
-                        <label for="imagem" class="btn-upload">Enviar foto para exibição</label>
-                        <input type="file" id="imagem" name="imagem">
-                    </div>
-                    <script>
-                        const input = document.getElementById('imagem');
-                        const mensagem = document.getElementById('mensagem');
+<div id="tudo">
+    <header class="topo">
+        <img src="images/fatec.png" alt="Logo FATEC" class="logotop">
+        <h1>Inscrição de Candidatura</h1>
+        <img src="images/cps.png" alt="Logo Cps" class="logotop">
+    </header>
 
-                        input.addEventListener('change', () => {
-                            if (input.files.length > 0) {
-                                alert("Imagem carregada com sucesso!");
-                                mensagem.style.color = 'green';
-                            } else {
-                                mensagem.textContent = '';
-                            }
-                        });
-                    </script>
-                    <input type="submit" value="Enviar Formulário">
-                </form>
-                </div>
-                <div class="finalizarsessao">
-                    <a href="votacoesaluno.php">
-                        <img src="images/log-out.png" alt="">
-                        <p>Voltar Para Votações</p>
-                    </a>
-                </div>
-        </main>
-        <footer class="rodape">
-            <img src="images/govsp.png" alt="" class="logosp">
-            <img src="images/astros.png" alt="" class="logobottom">
-        </footer>
-    </div>
+    <main class="formmain">
+        <div id="formbox">
+            <h2>Votação: <?= htmlspecialchars($vot['curso']) ?></h2>
+
+            <form method="POST" action="processa_candidatura.php" enctype="multipart/form-data">
+                <input type="hidden" name="idvotacao" value="<?= $idvotacao ?>">
+
+                <label>Nome:</label>
+                <input type="text" name="nomealuno" value="<?= htmlspecialchars($aluno['nome']) ?>" required>
+
+                <label>Email:</label>
+                <input type="email" name="email" value="<?= htmlspecialchars($aluno['email']) ?>" required>
+
+                <label>RA:</label>
+                <input type="text" name="ra" value="<?= htmlspecialchars($aluno['ra']) ?>" required>
+
+                <label>Foto (jpg/png)</label>
+                <label class="btn-upload" for="foto">Escolher foto</label>
+                <input type="file" id="foto" name="foto" accept="image/*" required>
+
+                <input type="submit" value="Enviar candidatura">
+            </form>
+        </div>
+
+        <div class="finalizarsessao">
+            <a href="votacoesaluno.php"><img src="images/log-out.png" alt=""> <p>Voltar</p></a>
+        </div>
+    </main>
+
+    <footer class="rodape">
+        <img src="images/govsp.png" alt="" class="logosp">
+        <img src="images/astros.png" alt="" class="logobottom">
+    </footer>
+</div>
 </body>
-
 </html>
