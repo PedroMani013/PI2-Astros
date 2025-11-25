@@ -372,8 +372,8 @@ main {
 .infovotacaoadm {
     display: flex;
     flex-direction: column;
-    gap: 0.5vh;
-    font-size: 2vh;
+    gap: 1vh;
+    font-size: 2.5vh;
 }
 
 .botoesvotoadm {
@@ -397,6 +397,14 @@ main {
 
 .botoesvotoadm a:hover {
     background-color: #3e67be;
+}
+
+.botoesvotoadm a.botaoremovot {
+    background-color: #a32024;
+}
+
+.botoesvotoadm a.botaoremovot:hover {
+    background-color: #7c1619;
 }
 
 .criarvot{
