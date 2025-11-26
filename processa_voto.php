@@ -52,10 +52,10 @@ if ((int)$stmt->fetch()['total'] > 0) {
 // insere voto
 $stmt = $pdo->prepare("INSERT INTO tb_votos (datavoto, idaluno, idcandidato) VALUES (NOW(), ?, ?)");
 if ($stmt->execute([$idaluno, $idcandidato])) {
-    // redirecionar de volta com mensagem (vamos usar uma página simples com seu layout)
-    $_SESSION['mensagem_sucesso'] = "Voto registrado com sucesso!";
-    header('Location: votacoesaluno.php');
+    // Redireciona para página de confirmação de voto
+    header('Location: popupvotoconcluido.php');
     exit;
 } else {
     die("Erro ao registrar voto.");
 }
+?>
