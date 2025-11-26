@@ -33,23 +33,33 @@ $votacoes = $stmt->fetchAll(PDO::FETCH_ASSOC);
     <main class="index">
         <div class="boxpadrao">
         <h1 class="headpaineladm">PAINEL ADMINISTRATIVO</h1>
-        <?php foreach ($votacoes as $v): ?>
-            <div class="votacaoadm">
-                <div class="infovotacaoadm">
-                    <strong><?= htmlspecialchars($v['curso']) ?></strong>
-                    <span>Semestre: <?= htmlspecialchars($v['semestre']) ?></span>
-                    <span>Candidatura: <?= (new DateTime($v['data_candidatura']))->format('d/m/Y H:i') ?></span>
-                    <span>Votação: <?= (new DateTime($v['data_inicio']))->format('d/m/Y H:i') ?> até <?= (new DateTime($v['data_final']))->format('d/m/Y H:i') ?></span>
-                </div>
+        <?php if (empty($votacoes)): ?>
 
-                <div class="botoesvotoadm">
-                    <a href="ver_candidatos.php?idvotacao=<?= (int)$v['idvotacao'] ?>">Ver candidatos</a>
-                    <a href="apurar_votos.php?idvotacao=<?= (int)$v['idvotacao'] ?>">Apurar votos</a>
-                    <a class="botaoremovot" href="remover_votacao.php?idvotacao=<?= (int)$v['idvotacao'] ?>">Remover Votação</a>
+    <p style="text-align:center; font-size:18px; margin: 20px 0;">
+        Não há votações disponíveis no momento.
+    </p>
+
+        <?php else: ?>
+
+            <?php foreach ($votacoes as $v): ?>
+                <div class="votacaoadm">
+                    <div class="infovotacaoadm">
+                        <strong><?= htmlspecialchars($v['curso']) ?></strong>
+                        <span>Semestre: <?= htmlspecialchars($v['semestre']) ?></span>
+                        <span>Candidatura: <?= (new DateTime($v['data_candidatura']))->format('d/m/Y H:i') ?></span>
+                        <span>Votação: <?= (new DateTime($v['data_inicio']))->format('d/m/Y H:i') ?> até <?= (new DateTime($v['data_final']))->format('d/m/Y H:i') ?></span>
+                    </div>
+
+                    <div class="botoesvotoadm">
+                        <a href="administracaocandidatos.php?idvotacao=<?= (int)$v['idvotacao'] ?>">Ver candidatos</a>
+                        <a href="votosadm.php?idvotacao=<?= (int)$v['idvotacao'] ?>">Apurar votos</a>
+                        <a class="botaoremovot" href="remocaovot.php?idvotacao=<?= (int)$v['idvotacao'] ?>">Remover Votação</a>
+                    </div>
                 </div>
-                
-            </div>
-        <?php endforeach; ?>
+            <?php endforeach; ?>
+
+        <?php endif; ?>
+
         <div class="criarvot">
             <a href="criarvotacao.php" class="botoesvotoadm"><div class="criavot"><img src="images/addvotacao.png" alt=""><p>Criar nova votação</p></div></a>
         </div>
