@@ -317,6 +317,75 @@ main {
     border-radius: 2vh;
 }
 
+/* Estilos para botões de votação - Adicionar ao final do style.css */
+
+/* Ajuste do cabeçalho da caixa de votação */
+.headcaixavotacao h2 {
+    margin: auto;
+    padding: 2vh;
+    text-align: center;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    line-height: 1.4;
+}
+
+/* Ajuste dos parágrafos da votação */
+.maincaixavotacao p {
+    font-size: 2vh;
+    margin: 0.5vh 0;
+}
+
+.botaocaixavotacao {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10%;
+    margin: 3vh 2% 2%;
+}
+
+/* Botão ativo (clicável) */
+.botaocaixavotacao .btn-active {
+    text-decoration: none;
+    background-color: #a32024;
+    color: #FFF;
+    width: 40%; 
+    text-align: center;
+    padding: 2%;
+    border-radius: 2vh;
+    font-weight: bold;
+    transition: background-color 0.3s ease;
+    cursor: pointer;
+}
+
+.botaocaixavotacao .btn-active:hover {
+    background-color: #5a1316;
+}
+
+/* Botão desabilitado */
+.botaocaixavotacao .btn-disabled {
+    text-decoration: none;
+    background-color: #cccccc;
+    color: #666666;
+    width: 40%; 
+    text-align: center;
+    padding: 2%;
+    border-radius: 2vh;
+    cursor: not-allowed;
+    pointer-events: none;
+    opacity: 0.6;
+}
+
+/* Informação adicional abaixo dos botões */
+.info-periodo {
+    text-align: center;
+    font-size: 1.8vh;
+    color: #666;
+    margin-top: 1.5vh;
+    font-style: italic;
+}
+
+
 /* Botão de finalizar sessão */
 
 .finalizarsessao {
