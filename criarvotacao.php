@@ -10,38 +10,47 @@ if (!isset($_SESSION['admin'])) {
 
 $erro = '';
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+
     $curso = trim($_POST['curso'] ?? '');
     $semestre = (int)($_POST['semestre'] ?? 0);
-    $data_inicio = trim($_POST['data_inicio'] ?? '');
-    $data_candidatura = trim($_POST['data_candidatura'] ?? '');
-    $data_final = trim($_POST['data_final'] ?? '');
+    $data_inicio = $_POST['data_inicio'] ?? '';
+    $data_candidatura = $_POST['data_candidatura'] ?? '';
+    $data_final = $_POST['data_final'] ?? '';
 
     if ($curso === '' || $semestre <= 0 || $data_inicio === '' || $data_candidatura === '' || $data_final === '') {
         $erro = "Preencha todos os campos.";
     } else {
-        $stmt = $pdo->prepare("INSERT INTO tb_votacoes 
-        (curso, semestre, data_inicio, data_candidatura, data_final, idadmin) 
-        VALUES (?, ?, ?, ?, ?, ?)");
 
-        if ($stmt->execute([$curso, $semestre, $data_inicio, $data_candidatura, $data_final, $_SESSION['admin']['idadmin']])) {
+        $datacand = $data_candidatura . " 00:00:00";
+        $datainicio = $data_inicio . " 00:00:00";
+        $datafim = $data_final . " 23:59:59";
 
-        // 1. Pegar o id da votação criada
-        $idvotacao = $pdo->lastInsertId();
+        // SEMPRE sim
+        $ativa = "sim";
 
-        // 2. Atualizar todos os alunos do mesmo curso/semestre
-        $sqlUpdate = "UPDATE tb_alunos 
-                    SET idvotacao = ? 
-                    WHERE curso = ? AND semestre = ?";
-                    
-        $stmtUpdate = $pdo->prepare($sqlUpdate);
-        $stmtUpdate->execute([$idvotacao, $curso, $semestre]);
+        $stmt = $pdo->prepare("
+            INSERT INTO tb_votacoes 
+            (curso, semestre, ativa, data_inicio, data_candidatura, data_final, idadmin)
+            VALUES (?, ?, ?, ?, ?, ?, ?)
+        ");
 
-        header('Location: paineladministrativo.php');
-        exit;
-    } else {
-        $erro = "Erro ao criar votação.";
-    }
+        if ($stmt->execute([$curso, $semestre, $ativa, $datainicio, $datacand, $datafim, $_SESSION['admin']['idadmin']])) {
 
+            $idvotacao = $pdo->lastInsertId();
+
+            $update = $pdo->prepare("
+                UPDATE tb_alunos 
+                SET idvotacao = ? 
+                WHERE curso = ? AND semestre = ?
+            ");
+            $update->execute([$idvotacao, $curso, $semestre]);
+
+            header("Location: paineladministrativo.php");
+            exit;
+
+        } else {
+            $erro = "Erro ao criar votação.";
+        }
     }
 }
 ?>
@@ -54,61 +63,62 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 </head>
 <body>
 <div id="tudo">
-    <header class="topo">
-        <img src="images/fatec.png" alt="Logo FATEC" class="logotop">
-        <h1>Criar Votação</h1>
-        <img src="images/cps.png" alt="Logo Cps" class="logotop">
-    </header>
 
-    <main class="formmain">
-        <div id="formbox">
-            <h2>Nova Votação</h2>
-            <?php if ($erro): ?><div class="erro"><span><?= htmlspecialchars($erro) ?></span></div><?php endif; ?>
+<header class="topo">
+    <img src="images/fatec.png" class="logotop">
+    <h1>Criar Votação</h1>
+    <img src="images/cps.png" class="logotop">
+</header>
 
-            <form method="POST">
-                <label>Curso</label>
-                    <select name="curso">
-                        <option value="0">Curso...</option>
-                        <option value="Desenvolvimento de Software Multiplataforma">
-                            Desenvolvimento de software multiplataforma</option>
-                        <option value="Gestão de Produção Industrial">
-                            Gestão de produção industrial</option>
-                        <option value="Gestão Empresarial">
-                            Gestão empresarial</option>
-                    </select>
+<main class="formmain">
+    <div id="formbox">
+        <h2>Nova Votação</h2>
+        <?php if ($erro): ?><div class="erro"><?= htmlspecialchars($erro) ?></div><?php endif; ?>
 
-                <label>Semestre</label>
-                    <select name="semestre">
-                        <option value="0">Semestre...</option>
-                        <option value="1">1º Semestre</option>
-                        <option value="2">2º Semestre</option>
-                        <option value="3">3º Semestre</option>
-                        <option value="4">4º Semestre</option>
-                        <option value="5">5º Semestre</option>
-                        <option value="6">6º Semestre</option>
-                    </select>
-                <label>Data candidatura (início)</label>
-                <input type="date" name="data_candidatura" placeholder="YYYY-MM-DD HH:MM:SS" required>
+        <form method="POST">
+            
+            <label>Curso</label>
+            <select name="curso">
+                <option value="">Curso...</option>
+                <option value="Desenvolvimento de Software Multiplataforma">Desenvolvimento de software multiplataforma</option>
+                <option value="Gestão de Produção Industrial">Gestão de produção industrial</option>
+                <option value="Gestão Empresarial">Gestão empresarial</option>
+            </select>
 
-                <label>Data início (votação)</label>
-                <input type="date" name="data_inicio" placeholder="YYYY-MM-DD HH:MM:SS" required>
+            <label>Semestre</label>
+            <select name="semestre">
+                <option value="0">Semestre...</option>
+                <option value="1">1º Semestre</option>
+                <option value="2">2º Semestre</option>
+                <option value="3">3º Semestre</option>
+                <option value="4">4º Semestre</option>
+                <option value="5">5º Semestre</option>
+                <option value="6">6º Semestre</option>
+            </select>
 
-                <label>Data final (votação)</label>
-                <input type="date" name="data_final" placeholder="YYYY-MM-DD HH:MM:SS" required>
+            <label>Data candidatura (início)</label>
+            <input type="date" name="data_candidatura" required>
 
-                <input type="submit" value="Criar votação">
-            </form>
-        </div>
+            <label>Data início (votação)</label>
+            <input type="date" name="data_inicio" required>
 
-        <div class="finalizarsessao">
-            <a href="paineladministrativo.php"><img src="images/log-out.png" alt=""> <p>Voltar</p></a>
-        </div>
-    </main>
+            <label>Data final (votação)</label>
+            <input type="date" name="data_final" required>
 
-    <footer class="rodape">
-        <img src="images/govsp.png" alt="" class="logosp">
-        <img src="images/astros.png" alt="" class="logobottom">
-    </footer>
+            <input type="submit" value="Criar votação">
+        </form>
+    </div>
+
+    <div class="finalizarsessao">
+        <a href="paineladministrativo.php"><img src="images/log-out.png"> <p>Voltar</p></a>
+    </div>
+</main>
+
+<footer class="rodape">
+    <img src="images/govsp.png" class="logosp">
+    <img src="images/astros.png" class="logobottom">
+</footer>
+
 </div>
 </body>
 </html>

@@ -14,6 +14,7 @@ CREATE TABLE tb_votacoes (
 	idvotacao INT PRIMARY KEY AUTO_INCREMENT,
 	curso VARCHAR(90) NOT NULL,
 	semestre INT NOT NULL,
+	ativa VARCHAR(3) NOT NULL,
 	data_inicio DATETIME NOT NULL,
 	data_candidatura DATETIME NOT NULL,
 	data_final DATETIME NOT NULL,
@@ -65,16 +66,6 @@ CREATE TABLE tb_votos (
 INSERT INTO tb_administradores (nome, email, senha)
 VALUES
 	('Alexandre da silva', 'alexandre.silva02@fatec.sp.gov.br', 'alesiva');
-
--- Inserção de Votações
--- ID 1: Gestao de produção industrial
--- ID 2: Desenvolvimento de softwere multiplataforma
--- ID 3: Gestão empresarial
-INSERT INTO tb_votacoes (curso, semestre, data_inicio, data_candidatura, data_final, idadmin)
-VALUES
-	('Gestao de produção industrial', 1, '2025-11-01 08:00:00', '2025-10-20 00:00:00', '2025-11-05 23:59:00', 1),
-	('Desenvolvimento de softwere multiplataforma', 1, '2025-11-10 08:00:00', '2025-10-25 00:00:00', '2025-11-15 23:59:00', 1),
-	('Gestão empresarial', 1, '2025-11-01 08:00:00', '2025-11-01 00:00:00', '2025-11-01 23:59:00', 1);
 
 -- Inserção de Alunos (idvotacao corrigido conforme o curso)
 INSERT INTO tb_alunos (nome, ra, email, senha, curso, semestre, idvotacao)

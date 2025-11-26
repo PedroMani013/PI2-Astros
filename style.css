@@ -389,7 +389,7 @@ main {
     color: #FFF;
     padding: 2vh;
     border-radius: 2vh;
-    width: 200px;
+    width: 22vh;
     text-align: center;
     font-size: 1.8vh;
     transition: 0.2s;
@@ -399,11 +399,20 @@ main {
     background-color: #3e67be;
 }
 
-.botoesvotoadm a.botaoremovot {
+.botoesvotoadm button.botaoremovot {
     background-color: #a32024;
+    color: #FFF;
+    padding: 2vh;
+    border-radius: 2vh;
+    width: 26vh;
+    text-align: center;
+    font-size: 1.8vh;
+    transition: 0.2s;
+    border: none;
+    cursor: pointer;
 }
 
-.botoesvotoadm a.botaoremovot:hover {
+.botoesvotoadm button.botaoremovot:hover {
     background-color: #7c1619;
 }
 
@@ -576,6 +585,8 @@ main {
 
 .candidato img {
     margin: 4vh 0;
+    width: 17vh;
+    border-radius: 100%;
 }
 
 .candidatotext {

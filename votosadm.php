@@ -15,11 +15,11 @@ $idvotacao = (int)$_GET['idvotacao'];
 
 // Buscar candidatos
 $sql = $pdo->prepare("
-    SELECT c.idcandidato, c.nome, c.ra, c.email,
+    SELECT c.idcandidato, c.nomealuno, c.ra, c.email,
         (SELECT COUNT(*) FROM tb_votos v WHERE v.idcandidato = c.idcandidato) AS total_votos
     FROM tb_candidatos c
     WHERE c.idvotacao = ?
-    ORDER BY c.nome ASC
+    ORDER BY c.nomealuno ASC
 ");
 $sql->execute([$idvotacao]);
 $candidatos = $sql->fetchAll(PDO::FETCH_ASSOC);
@@ -57,7 +57,7 @@ $candidatos = $sql->fetchAll(PDO::FETCH_ASSOC);
                 <?php foreach ($candidatos as $c): ?>
                     <div class="boxaluno">
                         <div class="boxalunotitulo">
-                            <h2>Candidato: <?= htmlspecialchars($c['nome']) ?></h2>
+                            <h2>Candidato: <?= htmlspecialchars($c['nomealuno']) ?></h2>
                         </div>
 
                         <div class="boxalunotexto">
