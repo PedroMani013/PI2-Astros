@@ -102,7 +102,7 @@ if (!$aluno) {
                     <p><strong>Curso:</strong> <?= htmlspecialchars($vot['curso']) ?></p>
                     <p><strong>Semestre:</strong> <?= htmlspecialchars($vot['semestre']) ?>º</p>
                     <p><strong>Data para candidatura:</strong> <?= (new DateTime($vot['data_candidatura']))->format('d/m/Y') ?></p>
-                    <p><strong>Data de início da votação:</strong> <?= (new DateTime($vot['data_inicio']))->format('d/m/Y') ?></p>
+                    <p><strong>Período de eleição:</strong> <?= (new DateTime($vot['data_inicio']))->format('d/m/Y') ?> até <?= (new DateTime($vot['data_final']))->format('d/m/Y') ?></p>
                     <p><strong>Candidatos:</strong> <?= count($candidatos) ?></p>
 
                     <div class="botaocaixavotacao">
