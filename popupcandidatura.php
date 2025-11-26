@@ -20,7 +20,7 @@
             <div class="greenpopup">
                 <img src="images/edit.png">
                 <h2>CANDIDATURA APROVADA!</h2>
-                <h3>Um comprovante foi enviado para seu e-mail</h3>
+                <h3>Sua inscrição foi realizada com sucesso</h3>
                 <p><a href="votacoesaluno.php">Clique Aqui para voltar para as votações</a></p>
                 <span>.</span>
             </div> 
