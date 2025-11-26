@@ -668,36 +668,50 @@ main {
     font-size: 3vh;
 }
 
-.botaovot button{
-    background-color: #147C0E;
-    color: #FFF;
-    border: none;
-    width: 35%;
-    padding: 0.8vh;
-    border-radius: 10vh;
-    font-size: 2vh;
-    cursor: pointer;
+/* Botão de remover candidato */
+
+.botaoremov {
+    margin-top: 15px;
+    padding-bottom: 15px;
 }
 
-.botaovot button:hover{
-    background-color: #0c5808;
-    transition: background-color 0.3s ease;
-}
-
-.botaoremov a{
+.botaoremov button {
     background-color: #a32024;
     color: #FFF;
     border: none;
-    width: 50%;
-    padding: 0.8vh;
-    border-radius: 10vh;
-    font-size: 2vh;
+    width: 80%;
+    padding: 10px;
+    border-radius: 10px;
+    font-size: 1.1rem;
     cursor: pointer;
+    transition: background-color 0.3s ease;
+    font-weight: bold;
 }
 
-.botaoremov a:hover{
+.botaoremov button:hover {
     background-color: #5a1316;
+}
+
+.botaovot {
+    margin-top: 15px;
+    padding-bottom: 15px;
+}
+
+.botaovot button {
+    background-color: #147C0E;
+    color: #FFF;
+    border: none;
+    width: 80%;
+    padding: 10px;
+    border-radius: 10px;
+    font-size: 1.1rem;
+    cursor: pointer;
     transition: background-color 0.3s ease;
+    font-weight: bold;
+}
+
+.botaovot button:hover {
+    background-color: #034100;
 }
 
 /* === POPUP PERSONALIZADO === */
@@ -967,28 +981,7 @@ main {
 
 /* CSS para Administração de Candidatos - Adicionar ao final do style.css */
 
-/* Botão de remover candidato */
-.botaoremov {
-    margin-top: 15px;
-    padding-bottom: 15px;
-}
 
-.botaoremov button {
-    background-color: #a32024;
-    color: #FFF;
-    border: none;
-    width: 80%;
-    padding: 10px;
-    border-radius: 10px;
-    font-size: 1.1rem;
-    cursor: pointer;
-    transition: background-color 0.3s ease;
-    font-weight: bold;
-}
-
-.botaoremov button:hover {
-    background-color: #5a1316;
-}
 
 /* Popup de confirmação específico para candidatos */
 #popupOverlayCand .popup button {
@@ -1045,31 +1038,6 @@ main {
     color: #000;
 }
 
-/* CSS para Administração de Candidatos - Adicionar ao final do style.css */
-
-/* Botão de remover candidato */
-.botaoremov {
-    margin-top: 15px;
-    padding-bottom: 15px;
-}
-
-.botaoremov button {
-    background-color: #a32024;
-    color: #FFF;
-    border: none;
-    width: 80%;
-    padding: 10px;
-    border-radius: 10px;
-    font-size: 1.1rem;
-    cursor: pointer;
-    transition: background-color 0.3s ease;
-    font-weight: bold;
-}
-
-.botaoremov button:hover {
-    background-color: #5a1316;
-}
-
 /* Popup de confirmação - Estilos gerais para todos os popups */
 .overlay .popup button {
     width: 100%;
@@ -1091,6 +1059,16 @@ main {
 
 .overlay .popup button[id*="confirmar"]:hover {
     background-color: #7c1619;
+}
+
+/* Botão confirmar (verde) */
+.overlay .popup button[id="confirmarvoto"] {
+    background-color: #147C0E;
+    color: white;
+}
+
+.overlay .popup button[id="confirmarvoto"]:hover {
+    background-color: #0c5808;
 }
 
 /* Botão cancelar (cinza) */
@@ -1118,7 +1096,7 @@ main {
 }
 
 .candidatotext p:first-child {
-    font-size: 1.4vh;
+    font-size: 1.8vh;
     color: #666;
 }
 
