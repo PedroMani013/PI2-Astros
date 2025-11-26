@@ -21,7 +21,7 @@
                 <img src="images/checkmark.png">
                 <h2>VOTAÇÃO CONCLUIDA!</h2>
                 <h3>Seu voto foi computado</h3>
-                <p><a href="index.php">Clique Aqui para voltar para a página inicial</a></p>
+                <p><a href="votacoesaluno.php">Clique Aqui para voltar para a página inicial</a></p>
                 <span>.</span>
             </div> 
         </main>
