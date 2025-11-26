@@ -22,7 +22,7 @@ if (isset($_POST['email'], $_POST['password'])) {
         if ($aluno && $senha === $aluno['senha']) {
             // Login bem-sucedido
             $_SESSION['aluno'] = [
-                'idaluno' => $aluno['id'],
+                'idaluno' => $aluno['idaluno'],
                 'nome' => $aluno['nome']
             ];
             header('Location: votacoesaluno.php');
