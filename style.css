@@ -979,10 +979,6 @@ main {
     font-size: 1.2rem;
 }
 
-/* CSS para Administração de Candidatos - Adicionar ao final do style.css */
-
-
-
 /* Popup de confirmação específico para candidatos */
 #popupOverlayCand .popup button {
     width: 100%;
