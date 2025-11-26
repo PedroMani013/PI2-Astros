@@ -13,6 +13,16 @@ if (!isset($_GET['idvotacao']) || !is_numeric($_GET['idvotacao'])) {
 
 $idvotacao = (int)$_GET['idvotacao'];
 
+// Busca informações da votação
+$stmtVot = $pdo->prepare("SELECT curso, semestre FROM tb_votacoes WHERE idvotacao = ?");
+$stmtVot->execute([$idvotacao]);
+$votacao = $stmtVot->fetch(PDO::FETCH_ASSOC);
+
+if (!$votacao) {
+    die("Votação não encontrada.");
+}
+
+// Busca candidatos
 $stmt = $pdo->prepare("SELECT * FROM tb_candidatos WHERE idvotacao = ? ORDER BY nomealuno ASC");
 $stmt->execute([$idvotacao]);
 $candidatos = $stmt->fetchAll(PDO::FETCH_ASSOC);
@@ -34,6 +44,15 @@ $candidatos = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
 <main class="index">
     <h1>Administração de Candidatos</h1>
+    
+    <div style="background-color: #e8f4f8; padding: 15px; border-radius: 10px; margin: 20px auto; width: 60%; text-align: center;">
+        <p style="margin: 5px 0; font-size: 1.2rem;">
+            <strong>Votação:</strong> <?= htmlspecialchars($votacao['curso']) ?> - <?= htmlspecialchars($votacao['semestre']) ?>º Semestre
+        </p>
+        <p style="margin: 5px 0; font-size: 1.1rem;">
+            <strong>Total de candidatos:</strong> <?= count($candidatos) ?>
+        </p>
+    </div>
 
     <?php if (empty($candidatos)): ?>
         <h2 style="text-align:center; margin-top:20px;">
@@ -50,18 +69,19 @@ $candidatos = $stmt->fetchAll(PDO::FETCH_ASSOC);
                 : "images/fotouser.png";
         ?>
         <div class="candidato">
-            <img src="<?= $foto ?>">
+            <img src="<?= $foto ?>" alt="Foto do candidato">
 
             <div class="candidatotext">
                 <p>CANDIDATO(A):</p>
-                <p><?= htmlspecialchars($c['nomealuno']) ?></p>
-                <p><strong>RA:</strong> <?= htmlspecialchars($c['ra']) ?></p>
-                <p><strong>Email:</strong> <?= htmlspecialchars($c['email']) ?></p>
+                <p><strong><?= htmlspecialchars($c['nomealuno']) ?></strong></p>
 
                 <div class="botaoremov">
-                    <a href="remover_candidato.php?id=<?= $c['idcandidato'] ?>&idvotacao=<?= $idvotacao ?>">
+                    <button class="btn-remover-candidato"
+                            data-id="<?= $c['idcandidato'] ?>"
+                            data-nome="<?= htmlspecialchars($c['nomealuno']) ?>"
+                            data-idvotacao="<?= $idvotacao ?>">
                         Remover Candidatura
-                    </a>
+                    </button>
                 </div>
             </div>
         </div>
@@ -82,5 +102,69 @@ $candidatos = $stmt->fetchAll(PDO::FETCH_ASSOC);
     <img src="images/astros.png" class="logobottom">
 </footer>
 </div>
+
+<!-- POPUP DE CONFIRMAÇÃO DE REMOÇÃO -->
+<div id="popupOverlayCand" class="overlay" style="display:none;">
+    <div class="popup">
+        <img src="images/alert-triangle.png" alt="Alerta" class="popup-icon">
+        <h2>Confirmação de Remoção</h2>
+        <p>
+            Tem certeza que deseja remover o candidato<br>
+            <strong><span id="nomeCandidato"></span></strong>?<br><br>
+            Esta ação não pode ser desfeita.
+        </p>
+        <button id="confirmarRemocaoCand" style="margin-top:15px;">
+            CONFIRMAR REMOÇÃO
+        </button>
+        <button id="cancelarRemocao" style="margin-top:10px; background-color:#6c757d;">
+            CANCELAR
+        </button>
+    </div>
+</div>
+
+<script>
+const overlayCand = document.getElementById("popupOverlayCand");
+const nomeCandidato = document.getElementById("nomeCandidato");
+const confirmarBtn = document.getElementById("confirmarRemocaoCand");
+const cancelarBtn = document.getElementById("cancelarRemocao");
+
+let idCandidatoSelecionado = null;
+let idVotacaoSelecionada = null;
+
+// Adiciona evento a todos os botões de remover
+document.querySelectorAll(".btn-remover-candidato").forEach(btn => {
+    btn.addEventListener("click", function() {
+        const id = this.getAttribute("data-id");
+        const nome = this.getAttribute("data-nome");
+        const idvotacao = this.getAttribute("data-idvotacao");
+
+        nomeCandidato.textContent = nome;
+        idCandidatoSelecionado = id;
+        idVotacaoSelecionada = idvotacao;
+
+        overlayCand.style.display = "flex";
+    });
+});
+
+// Fechar popup clicando no fundo
+overlayCand.addEventListener("click", function(e) {
+    if (e.target === overlayCand) {
+        overlayCand.style.display = "none";
+    }
+});
+
+// Botão cancelar
+cancelarBtn.addEventListener("click", function() {
+    overlayCand.style.display = "none";
+});
+
+// Confirmar remoção
+confirmarBtn.addEventListener("click", function() {
+    if (idCandidatoSelecionado && idVotacaoSelecionada) {
+        window.location.href = `remover_candidato.php?id=${idCandidatoSelecionado}&idvotacao=${idVotacaoSelecionada}`;
+    }
+});
+</script>
+
 </body>
 </html>

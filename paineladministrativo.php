@@ -96,13 +96,17 @@ $votacoes = $stmt->fetchAll(PDO::FETCH_ASSOC);
         <h2>Confirmação de Remoção</h2>
 
         <p>
-            Tem certeza que deseja remover a votação do curso 
-            <strong><span id="nomeVotacao"></span></strong>?<br>
-            Todos os candidatos e vínculos com alunos serão apagados.
+            Tem certeza que deseja remover a votação<br>
+            <strong><span id="nomeVotacao"></span></strong>?<br><br>
+            ⚠️ Todos os candidatos e votos desta votação serão apagados.<br>
+            Esta ação não pode ser desfeita.
         </p>
 
         <button id="confirmarRemocaoVot" style="margin-top:15px;">
             CONFIRMAR REMOÇÃO
+        </button>
+        <button id="cancelarRemocaoVot" style="margin-top:10px; background-color:#6c757d;">
+            CANCELAR
         </button>
     </div>
 </div>
@@ -111,34 +115,38 @@ $votacoes = $stmt->fetchAll(PDO::FETCH_ASSOC);
 const overlayVot = document.getElementById("popupOverlayVot");
 const nomeVot = document.getElementById("nomeVotacao");
 const confirmarVotBtn = document.getElementById("confirmarRemocaoVot");
+const cancelarVotBtn = document.getElementById("cancelarRemocaoVot");
 
 let idSelecionadoVot = null;
 
+// Adiciona evento a todos os botões de remover votação
 document.querySelectorAll(".remover-votacao-btn").forEach(btn => {
-
-    btn.addEventListener("click", () => {
-
-        const id = btn.getAttribute("data-id");
-        const curso = btn.getAttribute("data-curso");
-        const semestre = btn.getAttribute("data-semestre");
+    btn.addEventListener("click", function() {
+        const id = this.getAttribute("data-id");
+        const curso = this.getAttribute("data-curso");
+        const semestre = this.getAttribute("data-semestre");
 
         nomeVot.textContent = `${curso} - ${semestre}º semestre`;
-
         idSelecionadoVot = id;
 
         overlayVot.style.display = "flex";
     });
-
 });
 
 // Fechar popup clicando no fundo
-overlayVot.addEventListener("click", (e) => {
-    if (e.target === overlayVot)
+overlayVot.addEventListener("click", function(e) {
+    if (e.target === overlayVot) {
         overlayVot.style.display = "none";
+    }
+});
+
+// Botão cancelar
+cancelarVotBtn.addEventListener("click", function() {
+    overlayVot.style.display = "none";
 });
 
 // Confirmar remoção
-confirmarVotBtn.addEventListener("click", () => {
+confirmarVotBtn.addEventListener("click", function() {
     if (idSelecionadoVot) {
         window.location.href = "remocaovot.php?idvotacao=" + idSelecionadoVot;
     }
