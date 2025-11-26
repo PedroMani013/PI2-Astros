@@ -115,65 +115,82 @@ $candidatos = $stmt->fetchAll(PDO::FETCH_ASSOC);
         </footer>
     </div>
 
-    <!-- Popup de confirmação -->
-    <div id="popupOverlay" class="overlay">
+    <!-- Popup de confirmação de voto -->
+    <div id="popupOverlayVoto" class="overlay" style="display:none;">
         <div class="popup">
             <img src="images/alert-triangle.png" alt="Alerta" class="popup-icon">
             <h2>Confirmação de voto</h2>
             <p>
                 Você só tem direito a <strong>UM voto</strong>.<br>
-                Após a confirmação, não será possível removê-lo.<br>
-                Tem certeza que deseja votar em <strong><span id="nomeCandidato"></span></strong>?
+                Após a confirmação, não será possível removê-lo.<br><br>
+                Tem certeza que deseja votar em<br>
+                <strong><span id="nomeCandidatoVoto"></span></strong>?
             </p>
-            <button id="confirmarVoto">CONFIRMAR VOTO</button>
+            <button id="confirmarVoto" style="margin-top:15px;">
+                CONFIRMAR VOTO
+            </button>
+            <button id="cancelarVoto" style="margin-top:10px; background-color:#6c757d;">
+                CANCELAR
+            </button>
         </div>
     </div>
 
     <script>
-        const overlay = document.getElementById("popupOverlay");
-        const nomeCandidato = document.getElementById("nomeCandidato");
+        const overlayVoto = document.getElementById("popupOverlayVoto");
+        const nomeCandidatoVoto = document.getElementById("nomeCandidatoVoto");
         const confirmarBtn = document.getElementById("confirmarVoto");
+        const cancelarBtn = document.getElementById("cancelarVoto");
 
-        const botoesVotar = document.querySelectorAll(".btn-votar");
+        let idCandidatoSelecionado = null;
 
-        botoesVotar.forEach(botao => {
-            botao.addEventListener("click", (e) => {
-                const nome = botao.getAttribute("data-nome");
-                const idcandidato = botao.getAttribute("data-id");
-                
-                nomeCandidato.textContent = nome;
-                confirmarBtn.setAttribute("data-idcandidato", idcandidato);
-                
-                overlay.style.display = "flex";
+        // Adiciona evento a todos os botões de votar
+        document.querySelectorAll(".btn-votar").forEach(btn => {
+            btn.addEventListener("click", function() {
+                const id = this.getAttribute("data-id");
+                const nome = this.getAttribute("data-nome");
+
+                nomeCandidatoVoto.textContent = nome;
+                idCandidatoSelecionado = id;
+
+                overlayVoto.style.display = "flex";
             });
         });
 
-        overlay.addEventListener("click", (e) => {
-            if (e.target === overlay) overlay.style.display = "none";
+        // Fechar popup clicando no fundo
+        overlayVoto.addEventListener("click", function(e) {
+            if (e.target === overlayVoto) {
+                overlayVoto.style.display = "none";
+            }
         });
 
-        confirmarBtn.addEventListener("click", () => {
-            const idcandidato = confirmarBtn.getAttribute("data-idcandidato");
-            
-            // Cria um form e envia
-            const form = document.createElement("form");
-            form.method = "POST";
-            form.action = "processa_voto.php";
-            
-            const inputVotacao = document.createElement("input");
-            inputVotacao.type = "hidden";
-            inputVotacao.name = "idvotacao";
-            inputVotacao.value = "<?= $idvotacao ?>";
-            
-            const inputCandidato = document.createElement("input");
-            inputCandidato.type = "hidden";
-            inputCandidato.name = "idcandidato";
-            inputCandidato.value = idcandidato;
-            
-            form.appendChild(inputVotacao);
-            form.appendChild(inputCandidato);
-            document.body.appendChild(form);
-            form.submit();
+        // Botão cancelar
+        cancelarBtn.addEventListener("click", function() {
+            overlayVoto.style.display = "none";
+        });
+
+        // Confirmar voto
+        confirmarBtn.addEventListener("click", function() {
+            if (idCandidatoSelecionado) {
+                // Cria um formulário e envia
+                const form = document.createElement("form");
+                form.method = "POST";
+                form.action = "processa_voto.php";
+                
+                const inputVotacao = document.createElement("input");
+                inputVotacao.type = "hidden";
+                inputVotacao.name = "idvotacao";
+                inputVotacao.value = "<?= $idvotacao ?>";
+                
+                const inputCandidato = document.createElement("input");
+                inputCandidato.type = "hidden";
+                inputCandidato.name = "idcandidato";
+                inputCandidato.value = idCandidatoSelecionado;
+                
+                form.appendChild(inputVotacao);
+                form.appendChild(inputCandidato);
+                document.body.appendChild(form);
+                form.submit();
+            }
         });
     </script>
 </body>
