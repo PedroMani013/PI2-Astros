@@ -76,7 +76,7 @@ if (!$aluno) {
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="shortcut icon" href="images/astros.png">
+    <link rel="shortcut icon" href="images/favicon.png" type="image/x-icon">
     <title>Área de Votação - Aluno</title>
     <link rel="stylesheet" href="style.css">
 </head>

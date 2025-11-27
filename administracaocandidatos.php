@@ -34,7 +34,7 @@ $candidatos = $stmt->fetchAll(PDO::FETCH_ASSOC);
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>ASTROS - Administração de Candidatos</title>
     <link rel="stylesheet" href="style.css">
-    <link rel="shortcut icon" href="images/astros.png">
+    <link rel="shortcut icon" href="images/favicon.png" type="image/x-icon">
 </head>
 <body>
 <div id="tudo">

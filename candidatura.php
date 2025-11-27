@@ -68,7 +68,7 @@ unset($_SESSION['erro_candidatura']);
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>ASTROS - Cadastro de Candidatura</title>
-    <link rel="shortcut icon" href="images/astros.png">
+    <link rel="shortcut icon" href="images/favicon.png" type="image/x-icon">
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
