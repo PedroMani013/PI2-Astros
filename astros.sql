@@ -41,7 +41,7 @@ CREATE TABLE tb_alunos (
 -- Tabela de Candidatos
 CREATE TABLE tb_candidatos (
 	idcandidato INT PRIMARY KEY AUTO_INCREMENT,
-	imagem BLOB NOT NULL,
+	imagem BLOB,
 	nomealuno VARCHAR(80) NOT NULL,
     email VARCHAR(60) NOT NULL,
     ra VARCHAR(13) NOT NULL,
@@ -61,6 +61,13 @@ CREATE TABLE tb_votos (
 	FOREIGN KEY (idcandidato) REFERENCES
 	tb_candidatos(idcandidato)
 );
+
+SET SQL_MODE = 'NO_AUTO_VALUE_ON_ZERO';
+
+INSERT INTO tb_candidatos (idcandidato, nomealuno, ra, email)
+VALUES (0, 'VOTO NULO', '0000000000000', 'nulo@sistema.local');
+
+SET SQL_MODE = '';
 
 -- Inserção de Administradores
 INSERT INTO tb_administradores (nome, email, senha)

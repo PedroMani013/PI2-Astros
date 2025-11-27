@@ -36,16 +36,23 @@ if ($agora < $dataInicio || $agora > $dataFinal) {
 // Verifica se já votou
 $stmt = $pdo->prepare("
     SELECT COUNT(*) as total FROM tb_votos v
-    JOIN tb_candidatos c ON v.idcandidato = c.idcandidato
-    WHERE v.idaluno = ? AND c.idvotacao = ?
+    WHERE v.idaluno = ? AND v.idcandidato IN (
+        SELECT idcandidato FROM tb_candidatos WHERE idvotacao = ?
+        UNION SELECT 0
+    )
 ");
 $stmt->execute([$idaluno, $idvotacao]);
 if ((int)$stmt->fetch()['total'] > 0) {
     die("Você já votou nesta votação.");
 }
 
-// Busca candidatos
-$stmt = $pdo->prepare("SELECT idcandidato, nomealuno, ra, imagem FROM tb_candidatos WHERE idvotacao = ? ORDER BY nomealuno ASC");
+// Busca candidatos (EXCLUINDO o candidato especial de voto nulo ID = 0)
+$stmt = $pdo->prepare("
+    SELECT idcandidato, nomealuno, ra, imagem 
+    FROM tb_candidatos 
+    WHERE idvotacao = ? AND idcandidato != 0
+    ORDER BY nomealuno ASC
+");
 $stmt->execute([$idvotacao]);
 $candidatos = $stmt->fetchAll(PDO::FETCH_ASSOC);
 ?>
@@ -57,6 +64,29 @@ $candidatos = $stmt->fetchAll(PDO::FETCH_ASSOC);
     <title>ASTROS - Sistema De Votação</title>
     <link rel="shortcut icon" href="images/favicon.png" type="image/x-icon">
     <link rel="stylesheet" href="style.css">
+    <style>
+        .voto-nulo-container {
+            text-align: center;
+            margin: 40px auto 20px;
+            width: 90%;
+        }
+        
+        .btn-voto-nulo {
+            background-color: #4a4a4a;
+            color: #FFF;
+            border: none;
+            padding: 15px 60px;
+            border-radius: 10px;
+            font-size: 1.3rem;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+            font-weight: bold;
+        }
+        
+        .btn-voto-nulo:hover {
+            background-color: #2a2a2a;
+        }
+    </style>
 </head>
 <body>
     <div id="tudo">
@@ -101,6 +131,13 @@ $candidatos = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
             <?php endif; ?>
 
+            <!-- Botão de Voto Nulo -->
+            <div class="voto-nulo-container">
+                <button class="btn-voto-nulo" id="btnVotoNulo">
+                    Votar Nulo
+                </button>
+            </div>
+
             <div class="finalizarsessao">
                 <a href="votacoesaluno.php">
                     <img src="images/log-out.png" alt="">
@@ -120,7 +157,7 @@ $candidatos = $stmt->fetchAll(PDO::FETCH_ASSOC);
         <div class="popup">
             <img src="images/alert-triangle.png" alt="Alerta" class="popup-icon">
             <h2>Confirmação de voto</h2>
-            <p>
+            <p id="mensagemVoto">
                 Você só tem direito a <strong>UM voto</strong>.<br>
                 Após a confirmação, não será possível removê-lo.<br><br>
                 Tem certeza que deseja votar em<br>
@@ -138,10 +175,12 @@ $candidatos = $stmt->fetchAll(PDO::FETCH_ASSOC);
     <script>
         const overlayVoto = document.getElementById("popupOverlayVoto");
         const nomeCandidatoVoto = document.getElementById("nomeCandidatoVoto");
+        const mensagemVoto = document.getElementById("mensagemVoto");
         const confirmarBtn = document.getElementById("confirmarVoto");
         const cancelarBtn = document.getElementById("cancelarVoto");
 
         let idCandidatoSelecionado = null;
+        let isVotoNulo = false;
 
         // Adiciona evento a todos os botões de votar
         document.querySelectorAll(".btn-votar").forEach(btn => {
@@ -151,9 +190,32 @@ $candidatos = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
                 nomeCandidatoVoto.textContent = nome;
                 idCandidatoSelecionado = id;
+                isVotoNulo = false;
+
+                mensagemVoto.innerHTML = `
+                    Você só tem direito a <strong>UM voto</strong>.<br>
+                    Após a confirmação, não será possível removê-lo.<br><br>
+                    Tem certeza que deseja votar em<br>
+                    <strong>${nome}</strong>?
+                `;
 
                 overlayVoto.style.display = "flex";
             });
+        });
+
+        // Adiciona evento ao botão de voto nulo
+        document.getElementById("btnVotoNulo").addEventListener("click", function() {
+            idCandidatoSelecionado = 0; // ID especial para voto nulo
+            isVotoNulo = true;
+
+            mensagemVoto.innerHTML = `
+                Você só tem direito a <strong>UM voto</strong>.<br>
+                Após a confirmação, não será possível removê-lo.<br><br>
+                Tem certeza que deseja votar <strong>NULO</strong>?<br>
+                <small style="color: #666;">Seu voto não será contabilizado para nenhum candidato.</small>
+            `;
+
+            overlayVoto.style.display = "flex";
         });
 
         // Fechar popup clicando no fundo
@@ -170,27 +232,30 @@ $candidatos = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
         // Confirmar voto
         confirmarBtn.addEventListener("click", function() {
-            if (idCandidatoSelecionado) {
-                // Cria um formulário e envia
-                const form = document.createElement("form");
-                form.method = "POST";
-                form.action = "processa_voto.php";
-                
-                const inputVotacao = document.createElement("input");
-                inputVotacao.type = "hidden";
-                inputVotacao.name = "idvotacao";
-                inputVotacao.value = "<?= $idvotacao ?>";
-                
-                const inputCandidato = document.createElement("input");
-                inputCandidato.type = "hidden";
-                inputCandidato.name = "idcandidato";
-                inputCandidato.value = idCandidatoSelecionado;
-                
-                form.appendChild(inputVotacao);
-                form.appendChild(inputCandidato);
-                document.body.appendChild(form);
-                form.submit();
-            }
+            const form = document.createElement("form");
+            form.method = "POST";
+            form.action = "processa_voto.php";
+            
+            const inputVotacao = document.createElement("input");
+            inputVotacao.type = "hidden";
+            inputVotacao.name = "idvotacao";
+            inputVotacao.value = "<?= $idvotacao ?>";
+            
+            const inputCandidato = document.createElement("input");
+            inputCandidato.type = "hidden";
+            inputCandidato.name = "idcandidato";
+            inputCandidato.value = idCandidatoSelecionado; // Será 0 se for voto nulo
+            
+            const inputVotoNulo = document.createElement("input");
+            inputVotoNulo.type = "hidden";
+            inputVotoNulo.name = "voto_nulo";
+            inputVotoNulo.value = isVotoNulo ? "1" : "0";
+            
+            form.appendChild(inputVotacao);
+            form.appendChild(inputCandidato);
+            form.appendChild(inputVotoNulo);
+            document.body.appendChild(form);
+            form.submit();
         });
     </script>
 </body>

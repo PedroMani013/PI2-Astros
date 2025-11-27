@@ -14,6 +14,11 @@ if (!isset($_GET['id']) || !is_numeric($_GET['id'])) {
 $id = (int)$_GET['id'];
 $idvotacao = (int)$_GET['idvotacao'];
 
+// PROTEÇÃO: Não permitir remover o candidato especial de voto nulo (ID=0)
+if ($id === 0) {
+    die("Erro: Não é permitido remover o candidato especial de voto nulo.");
+}
+
 // Remover votos desse candidato
 $pdo->prepare("DELETE FROM tb_votos WHERE idcandidato = ?")->execute([$id]);
 

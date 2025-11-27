@@ -22,8 +22,12 @@ if (!$votacao) {
     die("Votação não encontrada.");
 }
 
-// Busca candidatos
-$stmt = $pdo->prepare("SELECT * FROM tb_candidatos WHERE idvotacao = ? ORDER BY nomealuno ASC");
+// Busca candidatos (EXCLUINDO o candidato especial ID=0)
+$stmt = $pdo->prepare("
+    SELECT * FROM tb_candidatos 
+    WHERE idvotacao = ? AND idcandidato != 0
+    ORDER BY nomealuno ASC
+");
 $stmt->execute([$idvotacao]);
 $candidatos = $stmt->fetchAll(PDO::FETCH_ASSOC);
 ?>

@@ -15,14 +15,7 @@ if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
 $idaluno = (int)$_SESSION['aluno']['idaluno'];
 $idcandidato = (int)$_POST['idcandidato'];
 $idvotacao = (int)$_POST['idvotacao'];
-
-// verifica candidato pertence a votação
-$stmt = $pdo->prepare("SELECT idvotacao FROM tb_candidatos WHERE idcandidato = ?");
-$stmt->execute([$idcandidato]);
-$c = $stmt->fetch();
-if (!$c || (int)$c['idvotacao'] !== $idvotacao) {
-    die("Candidato inválido para esta votação.");
-}
+$voto_nulo = isset($_POST['voto_nulo']) && $_POST['voto_nulo'] == '1';
 
 // verifica período de votação
 $stmt = $pdo->prepare("SELECT data_inicio, data_final FROM tb_votacoes WHERE idvotacao = ?");
@@ -38,15 +31,36 @@ if ($agora < $dataInicio || $agora > $dataFinal) {
     die("Fora do período de votação.");
 }
 
-// verifica se já votou nessa votação
+// verifica se já votou nessa votação (incluindo voto nulo)
 $stmt = $pdo->prepare("
     SELECT COUNT(*) AS total FROM tb_votos v
-    JOIN tb_candidatos c ON v.idcandidato = c.idcandidato
-    WHERE v.idaluno = ? AND c.idvotacao = ?
+    WHERE v.idaluno = ? AND v.idcandidato IN (
+        SELECT idcandidato FROM tb_candidatos WHERE idvotacao = ?
+        UNION SELECT 0
+    )
 ");
 $stmt->execute([$idaluno, $idvotacao]);
 if ((int)$stmt->fetch()['total'] > 0) {
     die("Você já votou nesta votação.");
+}
+
+// Valida o candidato
+if ($voto_nulo) {
+    // Para voto nulo, verifica se o candidato especial (ID=0) existe
+    $stmt = $pdo->prepare("SELECT idcandidato FROM tb_candidatos WHERE idcandidato = 0");
+    $stmt->execute();
+    if (!$stmt->fetch()) {
+        die("Erro: Sistema de voto nulo não configurado. Contate o administrador.");
+    }
+    $idcandidato = 0; // Garante que será 0
+} else {
+    // Para voto normal, verifica se candidato pertence à votação
+    $stmt = $pdo->prepare("SELECT idvotacao FROM tb_candidatos WHERE idcandidato = ?");
+    $stmt->execute([$idcandidato]);
+    $c = $stmt->fetch();
+    if (!$c || (int)$c['idvotacao'] !== $idvotacao) {
+        die("Candidato inválido para esta votação.");
+    }
 }
 
 // insere voto

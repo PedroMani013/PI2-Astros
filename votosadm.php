@@ -13,16 +13,34 @@ if (!isset($_GET['idvotacao'])) {
 
 $idvotacao = (int)$_GET['idvotacao'];
 
-// Buscar candidatos
+// Buscar candidatos (EXCLUINDO o candidato especial ID=0)
 $sql = $pdo->prepare("
     SELECT c.idcandidato, c.nomealuno, c.ra, c.email,
         (SELECT COUNT(*) FROM tb_votos v WHERE v.idcandidato = c.idcandidato) AS total_votos
     FROM tb_candidatos c
-    WHERE c.idvotacao = ?
+    WHERE c.idvotacao = ? AND c.idcandidato != 0
     ORDER BY c.nomealuno ASC
 ");
 $sql->execute([$idvotacao]);
 $candidatos = $sql->fetchAll(PDO::FETCH_ASSOC);
+
+// Buscar quantidade de votos nulos
+$sqlNulo = $pdo->prepare("
+    SELECT COUNT(*) as total_nulos FROM tb_votos WHERE idcandidato = 0
+");
+$sqlNulo->execute();
+$votosNulos = (int)$sqlNulo->fetch()['total_nulos'];
+
+// Buscar total de votos (incluindo nulos)
+$sqlTotal = $pdo->prepare("
+    SELECT COUNT(*) as total FROM tb_votos v
+    WHERE v.idcandidato IN (
+        SELECT idcandidato FROM tb_candidatos WHERE idvotacao = ?
+        UNION SELECT 0
+    )
+");
+$sqlTotal->execute([$idvotacao]);
+$totalVotos = (int)$sqlTotal->fetch()['total'];
 ?>
 <!DOCTYPE html>
 <html lang="pt-br">
@@ -33,6 +51,31 @@ $candidatos = $sql->fetchAll(PDO::FETCH_ASSOC);
     <link rel="shortcut icon" href="images/favicon.png" type="image/x-icon">
     <title>ASTROS - Sistema De Votação</title>
     <link rel="stylesheet" href="style.css">
+    <style>
+        .box-votos-nulos {
+            background-color: #6c757d;
+            border-radius: 2vh;
+            padding: 2vh;
+            margin: 2vh auto;
+            width: 80%;
+            color: white;
+            text-align: center;
+        }
+        
+        .box-votos-nulos h2 {
+            margin-bottom: 1vh;
+        }
+        
+        .box-total-votos {
+            background-color: #6986C5;
+            border-radius: 2vh;
+            padding: 2vh;
+            margin: 2vh auto;
+            width: 80%;
+            color: white;
+            text-align: center;
+        }
+    </style>
 </head>
 
 <body>
@@ -46,6 +89,12 @@ $candidatos = $sql->fetchAll(PDO::FETCH_ASSOC);
     <main class="index">
         <h1>Área de Eleição</h1>
 
+        <!-- Resumo Total -->
+        <div class="box-total-votos">
+            <h2>📊 Total de Votos Registrados: <?= $totalVotos ?></h2>
+        </div>
+
+        <!-- Candidatos -->
         <div class="boxvotos">
 
             <?php if (empty($candidatos)): ?>
@@ -73,6 +122,16 @@ $candidatos = $sql->fetchAll(PDO::FETCH_ASSOC);
             <?php endif; ?>
 
         </div>
+
+        <!-- Votos Nulos -->
+        <?php if ($votosNulos > 0): ?>
+        <div class="box-votos-nulos">
+            <h2>⚫ Votos Nulos</h2>
+            <p style="font-size: 2vh; margin-top: 1vh;">
+                Total de votos nulos: <strong style="font-size: 2.5vh;"><?= $votosNulos ?></strong>
+            </p>
+        </div>
+        <?php endif; ?>
 
         <div class="apurarvotos">
             <p><a href="#">Apurar Votos</a></p>
