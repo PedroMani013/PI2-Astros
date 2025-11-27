@@ -60,7 +60,7 @@ $votacoes = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
                     <div class="botoesvotoadm">
                         <a href="administracaocandidatos.php?idvotacao=<?= $v['idvotacao'] ?>">Ver candidatos</a>
-                        <a href="votosadm.php?idvotacao=<?= $v['idvotacao'] ?>">Apurar votos</a>
+                        <a href="votosadm.php?idvotacao=<?= $v['idvotacao'] ?>">Visualizar votos</a>
                         <button class="botaoremovot remover-votacao-btn"
                                 data-id="<?= $v['idvotacao'] ?>"
                                 data-curso="<?= htmlspecialchars($v['curso']) ?>"
