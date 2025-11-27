@@ -134,7 +134,7 @@ $totalVotos = (int)$sqlTotal->fetch()['total'];
         <?php endif; ?>
 
         <div class="apurarvotos">
-            <p><a href="#">Apurar Votos</a></p>
+            <p><a href="votosapurados.php?idvotacao=<?= $idvotacao ?>">Apurar Votos</a></p>
         </div>
 
         <div class="finalizarsessao">
