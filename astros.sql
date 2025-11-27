@@ -18,10 +18,12 @@ CREATE TABLE tb_votacoes (
 	data_inicio DATETIME NOT NULL,
 	data_candidatura DATETIME NOT NULL,
 	data_final DATETIME NOT NULL,
-	-- Adicionar Status de ativa ou não
 	idadmin INT,
-	FOREIGN KEY (idadmin) REFERENCES
-	tb_administradores(idadmin)
+	FOREIGN KEY (idadmin) REFERENCES tb_administradores(idadmin)
+	idcandidato_representante INT NULL,
+	FOREIGN KEY (idcandidato_representante) REFERENCES tb_candidatos(idcandidato),
+	idcandidato_suplente INT NULL,
+	FOREIGN KEY (idcandidato_suplente) REFERENCES tb_candidatos(idcandidato);
 );
 
 -- Tabela de Alunos
@@ -34,8 +36,7 @@ CREATE TABLE tb_alunos (
 	curso VARCHAR(90) NOT NULL,
 	semestre INT NOT NULL,
 	idvotacao INT,
-	FOREIGN KEY (idvotacao) REFERENCES
-	tb_votacoes(idvotacao)
+	FOREIGN KEY (idvotacao) REFERENCES tb_votacoes(idvotacao)
 );
 
 -- Tabela de Candidatos
@@ -46,8 +47,7 @@ CREATE TABLE tb_candidatos (
     email VARCHAR(60) NOT NULL,
     ra VARCHAR(13) NOT NULL,
 	idvotacao INT,
-	FOREIGN KEY (idvotacao) REFERENCES
-	tb_votacoes(idvotacao)
+	FOREIGN KEY (idvotacao) REFERENCES tb_votacoes(idvotacao)
 );
 
 -- Tabela de Votos (Rastreia quem votou e em quem)
@@ -55,11 +55,9 @@ CREATE TABLE tb_votos (
 	idvoto INT PRIMARY KEY AUTO_INCREMENT,
 	datavoto DATETIME NOT NULL,
 	idaluno INT NOT NULL,
-	FOREIGN KEY (idaluno) REFERENCES
-	tb_alunos(idaluno),
+	FOREIGN KEY (idaluno) REFERENCES tb_alunos(idaluno),
 	idcandidato INT NOT NULL,
-	FOREIGN KEY (idcandidato) REFERENCES
-	tb_candidatos(idcandidato)
+	FOREIGN KEY (idcandidato) REFERENCES tb_candidatos(idcandidato)
 );
 
 SET SQL_MODE = 'NO_AUTO_VALUE_ON_ZERO';
