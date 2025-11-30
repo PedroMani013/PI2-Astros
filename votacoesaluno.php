@@ -30,8 +30,16 @@ if (!$aluno) {
 } else {
     $idvotacao = (int)$aluno['idvotacao'];
 
-    // Busca votação
-    $stmt = $pdo->prepare("SELECT * FROM tb_votacoes WHERE idvotacao = ?");
+    // ALTERAÇÃO: Busca votação COM os nomes do representante e suplente
+    $stmt = $pdo->prepare("
+        SELECT v.*, 
+               c_rep.nomealuno as nome_representante,
+               c_sup.nomealuno as nome_suplente
+        FROM tb_votacoes v
+        LEFT JOIN tb_candidatos c_rep ON v.idcandidato_representante = c_rep.idcandidato
+        LEFT JOIN tb_candidatos c_sup ON v.idcandidato_suplente = c_sup.idcandidato
+        WHERE v.idvotacao = ?
+    ");
     $stmt->execute([$idvotacao]);
     $vot = $stmt->fetch();
 
@@ -64,10 +72,12 @@ if (!$aluno) {
         $stmt->execute([$idaluno, $idvotacao]);
         $already = (int)$stmt->fetch()['total'];
 
-        // Busca candidatos
-        $stmt = $pdo->prepare("SELECT idcandidato, nomealuno, ra FROM tb_candidatos WHERE idvotacao = ?");
-        $stmt->execute([$idvotacao]);
-        $candidatos = $stmt->fetchAll(PDO::FETCH_ASSOC);
+        // Busca candidatos (apenas se votação não foi finalizada)
+        if ($vot['ativa'] === 'sim') {
+            $stmt = $pdo->prepare("SELECT idcandidato, nomealuno, ra FROM tb_candidatos WHERE idvotacao = ? AND idcandidato != 0");
+            $stmt->execute([$idvotacao]);
+            $candidatos = $stmt->fetchAll(PDO::FETCH_ASSOC);
+        }
     }
 }
 ?>
@@ -79,6 +89,18 @@ if (!$aluno) {
     <link rel="shortcut icon" href="images/favicon.png" type="image/x-icon">
     <title>Área de Votação - Aluno</title>
     <link rel="stylesheet" href="style.css">
+    <style>
+        
+        .votacao-finalizada-badge {
+            background-color: #a32024;
+            color: white;
+            padding: 8px 15px;
+            border-radius: 20px;
+            display: inline-block;
+            margin: 10px 0;
+            font-weight: bold;
+        }
+    </style>
 </head>
 <body>
 <div id="tudo">
@@ -105,27 +127,55 @@ if (!$aluno) {
                     <p><strong>Semestre:</strong> <?= htmlspecialchars($vot['semestre']) ?>º</p>
                     <p><strong>Data para candidatura:</strong> <?= (new DateTime($vot['data_candidatura']))->format('d/m/Y') ?></p>
                     <p><strong>Período de eleição:</strong> <?= (new DateTime($vot['data_inicio']))->format('d/m/Y') ?> até <?= (new DateTime($vot['data_final']))->format('d/m/Y') ?></p>
-                    <p><strong>Candidatos:</strong> <?= count($candidatos) ?></p>
 
-                    <div class="botaocaixavotacao">
-                        <?php if ($status === 'antes_candidatura'): ?>
-                            <a href="#" class="btn-disabled">Candidatar</a>
-                            <a href="#" class="btn-disabled">Votar</a>
-                        <?php elseif ($status === 'periodo_candidatura'): ?>
-                            <a href="candidatura.php?idvotacao=<?= $idvotacao ?>" class="btn-active">Candidatar</a>
-                            <a href="#" class="btn-disabled">Votar</a>
-                        <?php elseif ($status === 'periodo_votacao'): ?>
-                            <a href="#" class="btn-disabled">Candidatar</a>
-                            <?php if ($already): ?>
-                                <a href="#" class="btn-disabled">Você já votou</a>
-                            <?php else: ?>
-                                <a href="areaeleicao.php?idvotacao=<?= $idvotacao ?>" class="btn-active">Votar</a>
-                            <?php endif; ?>
-                        <?php else: ?>
-                            <a href="#" class="btn-disabled">Candidatar</a>
-                            <a href="#" class="btn-disabled">Votar</a>
+                    <?php if ($vot['ativa'] === 'não'): ?>
+                        <!-- VOTAÇÃO FINALIZADA - MOSTRAR RESULTADOS -->
+                        
+                        
+
+                        <?php if ($vot['nome_representante']): ?>
+                            <div class="resultado-eleicao">
+                                <p><strong>Representante Eleito: </strong><?= htmlspecialchars($vot['nome_representante']) ?></p>
+                            </div>
                         <?php endif; ?>
-                    </div>
+                        
+                        <?php if ($vot['nome_suplente']): ?>
+                            <div class="resultado-eleicao">
+                                <p><strong>Suplente Eleito:</strong> <?= htmlspecialchars($vot['nome_suplente']) ?></p>
+                            </div>
+                        <?php endif; ?>
+                        <div class="votacao-finalizada-badge">
+                            ✓ Votação Finalizada
+                        </div>
+                        <div class="botaocaixavotacao">
+                            <a href="#" class="btn-disabled">Votação Encerrada</a>
+                        </div>
+
+                    <?php else: ?>
+                        <!-- VOTAÇÃO ATIVA - MOSTRAR CANDIDATOS E BOTÕES -->
+                        
+                        <p><strong>Candidatos:</strong> <?= count($candidatos) ?></p>
+
+                        <div class="botaocaixavotacao">
+                            <?php if ($status === 'antes_candidatura'): ?>
+                                <a href="#" class="btn-disabled">Candidatar</a>
+                                <a href="#" class="btn-disabled">Votar</a>
+                            <?php elseif ($status === 'periodo_candidatura'): ?>
+                                <a href="candidatura.php?idvotacao=<?= $idvotacao ?>" class="btn-active">Candidatar</a>
+                                <a href="#" class="btn-disabled">Votar</a>
+                            <?php elseif ($status === 'periodo_votacao'): ?>
+                                <a href="#" class="btn-disabled">Candidatar</a>
+                                <?php if ($already): ?>
+                                    <a href="#" class="btn-disabled">Você já votou</a>
+                                <?php else: ?>
+                                    <a href="areaeleicao.php?idvotacao=<?= $idvotacao ?>" class="btn-active">Votar</a>
+                                <?php endif; ?>
+                            <?php else: ?>
+                                <a href="#" class="btn-disabled">Candidatar</a>
+                                <a href="#" class="btn-disabled">Votar</a>
+                            <?php endif; ?>
+                        </div>
+                    <?php endif; ?>
                 </div>
             </div>
 

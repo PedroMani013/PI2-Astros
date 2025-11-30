@@ -1100,3 +1100,154 @@ main {
     font-size: 2.2vh;
     color: #000;
 }
+
+/* finalização */
+
+        .popup-finalizar {
+            background: white;
+            max-width: 600px;
+            margin: 50px auto;
+            border-radius: 20px;
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.2);
+            overflow: hidden;
+        }
+
+        .popup-header-finalizar {
+            background-color: #a32024;
+            color: white;
+            padding: 30px;
+            text-align: center;
+        }
+
+        .popup-header-finalizar h2 {
+            font-size: 2rem;
+            margin-bottom: 10px;
+        }
+
+        .popup-content-finalizar {
+            padding: 30px;
+        }
+
+        .votacao-info-box {
+            background: #f8f9fa;
+            border-radius: 10px;
+            padding: 20px;
+            margin-bottom: 25px;
+        }
+
+        .votacao-info-box h3 {
+            color: #000000;
+            margin-bottom: 15px;
+            font-size: 1.3rem;
+        }
+
+        .info-row {
+            display: flex;
+            justify-content: space-between;
+            padding: 10px 0;
+            border-bottom: 1px solid #e0e0e0;
+        }
+
+        .info-row:last-child {
+            border-bottom: none;
+        }
+
+        .vencedor-card {
+            background-color: #a32024;
+            color: white;
+            padding: 20px;
+            border-radius: 15px;
+            margin-bottom: 15px;
+        }
+
+        .vencedor-card h4 {
+            font-size: 0.9rem;
+            opacity: 0.9;
+            margin-bottom: 8px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .vencedor-card .nome {
+            font-size: 1.5rem;
+            font-weight: 700;
+            margin-bottom: 5px;
+        }
+
+        .vencedor-card .detalhes {
+            font-size: 0.9rem;
+            opacity: 0.8;
+        }
+
+        .aviso-importante {
+            background: #fff3cd;
+            border: 2px solid #ffc107;
+            border-radius: 10px;
+            padding: 20px;
+            margin: 25px 0;
+            text-align: center;
+        }
+
+        .aviso-importante strong {
+            display: block;
+            color: #856404;
+            font-size: 1.2rem;
+            margin-bottom: 10px;
+        }
+
+        .aviso-importante p {
+            color: #856404;
+            margin: 5px 0;
+        }
+
+        .botoes-finalizar {
+            display: flex;
+            gap: 15px;
+            margin-top: 30px;
+        }
+
+        .btn-finalizar-confirmar,
+        .btn-finalizar-cancelar {
+            flex: 1;
+            padding: 15px;
+            border: none;
+            border-radius: 10px;
+            font-size: 1.1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-decoration: none;
+            display: inline-block;
+            text-align: center;
+        }
+
+        .btn-finalizar-confirmar {
+            background: #147C0E;
+            color: white;
+        }
+
+        .btn-finalizar-confirmar:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(102, 126, 234, 0.4);
+        }
+
+        .btn-finalizar-cancelar {
+            background: #6c757d;
+            color: white;
+        }
+
+        .btn-finalizar-cancelar:hover {
+            background: #545b62;
+        }
+
+        .sem-candidatos {
+            text-align: center;
+            padding: 40px;
+            color: #666;
+        }
+
+        .sem-candidatos img {
+            width: 80px;
+            margin-bottom: 20px;
+            opacity: 0.5;
+        }

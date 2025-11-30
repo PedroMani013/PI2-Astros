@@ -206,8 +206,9 @@ $totalGeral = $totalVotos + $votosNulos;
                 <p><a href="gerar_ata.php?idvotacao=<?= $idvotacao ?>">Gerar Ata</a></p>
             </div>
             
+            <!-- ALTERAÇÃO: Link para finalizar votação -->
             <div class="apurarvotos">
-                <p><a href="finalizar_votacao.php?idvotacao=<?= $idvotacao ?>">Finalizar Votação</a></p>
+                <p><a href="popupfinalizarvotacao.php?idvotacao=<?= $idvotacao ?>">Finalizar Votação</a></p>
             </div>
             
             <div class="finalizarsessao">

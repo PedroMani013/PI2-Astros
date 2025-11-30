@@ -8,7 +8,13 @@ if (!isset($_SESSION['admin'])) {
     exit;
 }
 
-$stmt = $pdo->prepare("SELECT * FROM tb_votacoes ORDER BY data_inicio DESC");
+// ALTERAÇÃO: Filtrar votações - mostrar ativas e finalizadas há menos de 1 semana
+$stmt = $pdo->prepare("
+    SELECT * FROM tb_votacoes 
+    WHERE ativa = 'sim' 
+       OR (ativa = 'não' AND data_final >= DATE_SUB(NOW(), INTERVAL 7 DAY))
+    ORDER BY data_inicio DESC
+");
 $stmt->execute();
 $votacoes = $stmt->fetchAll(PDO::FETCH_ASSOC);
 ?>
@@ -52,8 +58,13 @@ $votacoes = $stmt->fetchAll(PDO::FETCH_ASSOC);
                         <span>Candidatura: <?= (new DateTime($v['data_candidatura']))->format('d/m/Y H:i') ?></span>
                         <span>Votação: <?= (new DateTime($v['data_inicio']))->format('d/m/Y H:i') ?> até <?= (new DateTime($v['data_final']))->format('d/m/Y H:i') ?></span>
 
+                        <!-- ALTERAÇÃO: Indicador de status -->
                         <span>Status:
-                            <span class="status-ativa">Ativa</span>
+                            <?php if ($v['ativa'] === 'sim'): ?>
+                                <span class="status-ativa">Ativa</span>
+                            <?php else: ?>
+                                <span class="status-inativa">Finalizada</span>
+                            <?php endif; ?>
                         </span>
 
                     </div>
