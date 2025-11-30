@@ -8,51 +8,9 @@ if (!isset($_SESSION['admin'])) {
     exit;
 }
 
-$erro = '';
-if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-
-    $curso = trim($_POST['curso'] ?? '');
-    $semestre = (int)($_POST['semestre'] ?? 0);
-    $data_inicio = $_POST['data_inicio'] ?? '';
-    $data_candidatura = $_POST['data_candidatura'] ?? '';
-    $data_final = $_POST['data_final'] ?? '';
-
-    if ($curso === '' || $semestre <= 0 || $data_inicio === '' || $data_candidatura === '' || $data_final === '') {
-        $erro = "Preencha todos os campos.";
-    } else {
-
-        $datacand = $data_candidatura . " 00:00:00";
-        $datainicio = $data_inicio . " 00:00:00";
-        $datafim = $data_final . " 23:59:59";
-
-        // SEMPRE sim
-        $ativa = "sim";
-
-        $stmt = $pdo->prepare("
-            INSERT INTO tb_votacoes 
-            (curso, semestre, ativa, data_inicio, data_candidatura, data_final, idadmin)
-            VALUES (?, ?, ?, ?, ?, ?, ?)
-        ");
-
-        if ($stmt->execute([$curso, $semestre, $ativa, $datainicio, $datacand, $datafim, $_SESSION['admin']['idadmin']])) {
-
-            $idvotacao = $pdo->lastInsertId();
-
-            $update = $pdo->prepare("
-                UPDATE tb_alunos 
-                SET idvotacao = ? 
-                WHERE curso = ? AND semestre = ?
-            ");
-            $update->execute([$idvotacao, $curso, $semestre]);
-
-            header("Location: paineladministrativo.php");
-            exit;
-
-        } else {
-            $erro = "Erro ao criar votação.";
-        }
-    }
-}
+// Captura mensagens de erro/sucesso
+$erro = $_SESSION['erro_votacao'] ?? '';
+unset($_SESSION['erro_votacao']);
 ?>
 <!DOCTYPE html>
 <html lang="pt-br">
@@ -75,21 +33,26 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 <main class="formmain">
     <div id="formbox">
         <h2>Nova Votação</h2>
-        <?php if ($erro): ?><div class="erro"><?= htmlspecialchars($erro) ?></div><?php endif; ?>
+        
+        <?php if ($erro): ?>
+            <div class="erro">
+                <span><?= htmlspecialchars($erro) ?></span>
+            </div>
+        <?php endif; ?>
 
-        <form method="POST">
+        <form method="POST" action="processa_votacao.php">
             
             <label>Curso</label>
-            <select name="curso">
-                <option value="">Curso...</option>
+            <select name="curso" required>
+                <option value="">Selecione o curso...</option>
                 <option value="Desenvolvimento de Software Multiplataforma">Desenvolvimento de software multiplataforma</option>
                 <option value="Gestão de Produção Industrial">Gestão de produção industrial</option>
                 <option value="Gestão Empresarial">Gestão empresarial</option>
             </select>
 
             <label>Semestre</label>
-            <select name="semestre">
-                <option value="0">Semestre...</option>
+            <select name="semestre" required>
+                <option value="0">Selecione o semestre...</option>
                 <option value="1">1º Semestre</option>
                 <option value="2">2º Semestre</option>
                 <option value="3">3º Semestre</option>
