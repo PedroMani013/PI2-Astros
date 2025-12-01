@@ -22,7 +22,7 @@ $data_final = $_POST['data_final'] ?? '';
 
 $erros = [];
 
-// Validações
+// Validações básicas
 if ($curso === '' || $curso === '0') {
     $erros[] = "Selecione um curso válido.";
 }
@@ -45,7 +45,7 @@ if (!$data_final) {
 
 // Se já tem erros básicos, retorna
 if (!empty($erros)) {
-    $_SESSION['erro_votacao'] = implode("<br>", $erros);
+    $_SESSION['erros_votacao'] = $erros;
     header("Location: criarvotacao.php");
     exit;
 }
@@ -64,7 +64,7 @@ if ($datainicio >= $datafim) {
 }
 
 if (!empty($erros)) {
-    $_SESSION['erro_votacao'] = implode("<br>", $erros);
+    $_SESSION['erros_votacao'] = $erros;
     header("Location: criarvotacao.php");
     exit;
 }
@@ -101,14 +101,14 @@ try {
         exit;
         
     } else {
-        $_SESSION['erro_votacao'] = "Erro ao criar votação no banco de dados.";
+        $_SESSION['erros_votacao'] = ["Erro ao criar votação no banco de dados."];
         header("Location: criarvotacao.php");
         exit;
     }
     
 } catch (PDOException $e) {
     error_log("Erro ao criar votação: " . $e->getMessage());
-    $_SESSION['erro_votacao'] = "Erro no sistema. Por favor, contate o administrador.";
+    $_SESSION['erros_votacao'] = ["Erro no sistema. Por favor, contate o administrador."];
     header("Location: criarvotacao.php");
     exit;
 }

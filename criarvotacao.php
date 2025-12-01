@@ -9,9 +9,10 @@ if (!isset($_SESSION['admin'])) {
 }
 
 // Captura mensagens de erro/sucesso
-$erro = $_SESSION['erro_votacao'] ?? '';
-unset($_SESSION['erro_votacao']);
+$erros = $_SESSION['erros_votacao'] ?? [];
+unset($_SESSION['erros_votacao']);
 ?>
+
 <!DOCTYPE html>
 <html lang="pt-br">
 <head>
@@ -34,10 +35,12 @@ unset($_SESSION['erro_votacao']);
     <div id="formbox">
         <h2>Nova Votação</h2>
         
-        <?php if ($erro): ?>
-            <div class="erro">
-                <span><?= htmlspecialchars($erro) ?></span>
-            </div>
+        <?php if (!empty($erros)): ?>
+            <?php foreach ($erros as $erro): ?>
+                <div class="erro">
+                    <span><?= htmlspecialchars($erro) ?></span>
+                </div>
+            <?php endforeach; ?>
         <?php endif; ?>
 
         <form method="POST" action="processa_votacao.php">
