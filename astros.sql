@@ -112,3 +112,179 @@ VALUES
 ('Sabrina Lopes', '2781622613008', 'sabrina.lopes@fatec.sp.gov.br', 'Sl2608bb', 'Gestão de Produção Industrial', 1, NULL),
 ('Diego Barcellos', '2781622613009', 'diego.barcellos@fatec.sp.gov.br', 'Db7764cc', 'Gestão de Produção Industrial', 1, NULL),
 ('Tatiane Moraes', '2781622613010', 'tatiane.moraes@fatec.sp.gov.br', 'Tm8420dd', 'Gestão de Produção Industrial', 1, NULL);
+
+-- ============================================
+-- SCRIPT DE INSERÇÃO PARA APRESENTAÇÃO
+-- Data: 01/12/2025
+-- ============================================
+
+USE astros;
+
+-- ============================================
+-- 1. INSERIR VOTAÇÕES
+-- ============================================
+
+-- Votação 1: Desenvolvimento de Software Multiplataforma - 1º Semestre
+INSERT INTO tb_votacoes (curso, semestre, ativa, data_inicio, data_candidatura, data_final, idadmin, idcandidato_representante, idcandidato_suplente)
+VALUES (
+    'Desenvolvimento de Software Multiplataforma',
+    1,
+    'sim',
+    '2025-11-30 00:00:00',
+    '2025-11-28 00:00:00',
+    '2025-12-01 23:59:59',
+    1,
+    NULL,
+    NULL
+);
+
+-- Votação 2: Gestão Empresarial - 1º Semestre
+INSERT INTO tb_votacoes (curso, semestre, ativa, data_inicio, data_candidatura, data_final, idadmin, idcandidato_representante, idcandidato_suplente)
+VALUES (
+    'Gestão Empresarial',
+    1,
+    'sim',
+    '2025-11-29 00:00:00',
+    '2025-11-28 00:00:00',
+    '2025-12-10 23:59:59',
+    1,
+    NULL,
+    NULL
+);
+
+-- ============================================
+-- 2. ATUALIZAR ALUNOS COM IDVOTACAO
+-- ============================================
+
+-- Vincular alunos de DSM à votação 1 (idvotacao = 1)
+UPDATE tb_alunos 
+SET idvotacao = 1 
+WHERE curso = 'Desenvolvimento de Software Multiplataforma' AND semestre = 1;
+
+-- Vincular alunos de Gestão Empresarial à votação 2 (idvotacao = 2)
+UPDATE tb_alunos 
+SET idvotacao = 2 
+WHERE curso = 'Gestão Empresarial' AND semestre = 1;
+
+-- ============================================
+-- 3. INSERIR CANDIDATOS
+-- ============================================
+
+-- Candidatos de Gestão Empresarial (idvotacao = 2)
+INSERT INTO tb_candidatos (imagem, nomealuno, email, ra, idvotacao)
+VALUES 
+(NULL, 'Lucas Ferreira', 'lucas.ferreira@fatec.sp.gov.br', '2780642613001', 2),
+(NULL, 'Mariana Duarte', 'mariana.duarte@fatec.sp.gov.br', '2780642613002', 2),
+(NULL, 'Ricardo Alves', 'ricardo.alves@fatec.sp.gov.br', '2780642613003', 2);
+
+-- Candidatos de DSM (idvotacao = 1)
+INSERT INTO tb_candidatos (imagem, nomealuno, email, ra, idvotacao)
+VALUES 
+(NULL, 'Carlos Nogueira', 'carlos.nogueira@fatec.sp.gov.br', '2781392613001', 1),
+(NULL, 'Luis Porfirio', 'luis.porfirio@fatec.sp.gov.br', '2781392613002', 1),
+(NULL, 'Henrique Costa', 'henrique.costa@fatec.sp.gov.br', '2781392613003', 1),
+(NULL, 'Natália Silva', 'natalia.silva@fatec.sp.gov.br', '2781392613004', 1);
+
+-- ============================================
+-- 4. INSERIR VOTOS - GESTÃO EMPRESARIAL
+-- ============================================
+
+-- 4 votos para Lucas Ferreira (idcandidato = 1)
+-- Eleitores: Juliana Campos, Ana Ribeiro, Thiago Moreira, Patricia Gomes
+INSERT INTO tb_votos (datavoto, idaluno, idcandidato)
+VALUES 
+('2025-11-29 10:30:00', 4, 1),  -- Juliana Campos
+('2025-11-29 11:15:00', 6, 1),  -- Ana Ribeiro
+('2025-11-29 14:20:00', 7, 1),  -- Thiago Moreira
+('2025-11-29 16:45:00', 8, 1);  -- Patricia Gomes
+
+-- 3 votos para Mariana Duarte (idcandidato = 2)
+-- Eleitores: Felipe Cardoso, Beatriz Moura, Lucas Ferreira
+INSERT INTO tb_votos (datavoto, idaluno, idcandidato)
+VALUES 
+('2025-11-29 09:00:00', 9, 2),   -- Felipe Cardoso
+('2025-11-29 13:30:00', 10, 2),  -- Beatriz Moura
+('2025-11-29 15:00:00', 1, 2);   -- Lucas Ferreira
+
+-- 2 votos para Ricardo Alves (idcandidato = 3)
+-- Eleitores: Mariana Duarte, Ricardo Alves
+INSERT INTO tb_votos (datavoto, idaluno, idcandidato)
+VALUES 
+('2025-11-29 10:00:00', 2, 3),   -- Mariana Duarte
+('2025-11-29 12:00:00', 3, 3);   -- Ricardo Alves
+
+-- ============================================
+-- 5. INSERIR VOTOS - DSM
+-- ============================================
+
+-- 4 votos para Luis Porfirio (idcandidato = 5)
+-- Eleitores: Rafael Rocha, Isabela Castro, Bruno Teixeira, Camila Rezende
+INSERT INTO tb_votos (datavoto, idaluno, idcandidato)
+VALUES 
+('2025-11-30 09:15:00', 15, 5),  -- Rafael Rocha
+('2025-11-30 10:30:00', 16, 5),  -- Isabela Castro
+('2025-11-30 11:45:00', 17, 5),  -- Bruno Teixeira
+('2025-11-30 14:00:00', 18, 5);  -- Camila Rezende
+
+-- 3 votos para Carlos Nogueira (idcandidato = 4)
+-- Eleitores: Eduardo Lima, Vanessa Araujo, Henrique Costa
+INSERT INTO tb_votos (datavoto, idaluno, idcandidato)
+VALUES 
+('2025-11-30 09:00:00', 19, 4),  -- Eduardo Lima
+('2025-11-30 10:00:00', 20, 4),  -- Vanessa Araujo
+('2025-11-30 13:00:00', 13, 4);  -- Henrique Costa
+
+-- 1 voto para Henrique Costa (idcandidato = 6)
+-- Eleitor: Carlos Nogueira
+INSERT INTO tb_votos (datavoto, idaluno, idcandidato)
+VALUES 
+('2025-11-30 11:00:00', 11, 6);  -- Carlos Nogueira
+
+-- 1 voto NULO (idcandidato = 0)
+-- Eleitor: Natália Silva
+INSERT INTO tb_votos (datavoto, idaluno, idcandidato)
+VALUES 
+('2025-11-30 15:30:00', 14, 0);  -- Natália Silva (voto nulo)
+
+-- ============================================
+-- RESUMO DOS ALUNOS QUE NÃO VOTARAM
+-- ============================================
+-- Luis Porfirio (idaluno = 12) - DSM - Não votou
+-- Gabriel Manrique (idaluno = 5) - Gestão Empresarial - Não votou
+
+-- ============================================
+-- VERIFICAÇÕES (OPCIONAL - PARA CONFERIR)
+-- ============================================
+
+-- Total de votos por candidato em Gestão Empresarial
+-- SELECT c.nomealuno, COUNT(v.idvoto) as total_votos
+-- FROM tb_candidatos c
+-- LEFT JOIN tb_votos v ON c.idcandidato = v.idcandidato
+-- WHERE c.idvotacao = 2
+-- GROUP BY c.idcandidato, c.nomealuno
+-- ORDER BY total_votos DESC;
+
+-- Total de votos por candidato em DSM
+-- SELECT c.nomealuno, COUNT(v.idvoto) as total_votos
+-- FROM tb_candidatos c
+-- LEFT JOIN tb_votos v ON c.idcandidato = v.idcandidato
+-- WHERE c.idvotacao = 1
+-- GROUP BY c.idcandidato, c.nomealuno
+-- ORDER BY total_votos DESC;
+
+-- Verificar votos nulos
+-- SELECT COUNT(*) as votos_nulos FROM tb_votos WHERE idcandidato = 0;
+
+-- Alunos que não votaram em DSM
+-- SELECT a.nome, a.ra 
+-- FROM tb_alunos a
+-- WHERE a.idvotacao = 1 
+-- AND a.idaluno NOT IN (SELECT idaluno FROM tb_votos WHERE idcandidato IN (4,5,6,7,0))
+-- ORDER BY a.nome;
+
+-- Alunos que não votaram em Gestão Empresarial
+-- SELECT a.nome, a.ra 
+-- FROM tb_alunos a
+-- WHERE a.idvotacao = 2 
+-- AND a.idaluno NOT IN (SELECT idaluno FROM tb_votos WHERE idcandidato IN (1,2,3))
+-- ORDER BY a.nome;

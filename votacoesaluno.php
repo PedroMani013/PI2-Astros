@@ -147,9 +147,6 @@ if (!$aluno) {
                         <div class="votacao-finalizada-badge">
                             ✓ Votação Finalizada
                         </div>
-                        <div class="botaocaixavotacao">
-                            <a href="#" class="btn-disabled">Votação Encerrada</a>
-                        </div>
 
                     <?php else: ?>
                         <!-- VOTAÇÃO ATIVA - MOSTRAR CANDIDATOS E BOTÕES -->
