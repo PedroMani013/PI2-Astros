@@ -13,7 +13,7 @@
     <div id="tudo">
         <header class="topo">
             <img src="images/fatec.png" alt="Logo FATEC" class="logotop">
-            <h1>Votação Para Representante de Sala</h1>
+            <h1>Sistema de Votação para representante de sala</h1>
             <img src="images/cps.png" alt="Logo Cps" class="logotop">
         </header>
         <main class="index">

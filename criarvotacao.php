@@ -19,7 +19,7 @@ unset($_SESSION['erros_votacao']);
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="shortcut icon" href="images/favicon.png" type="image/x-icon">
-    <title>Criar Votação</title>
+    <title>ASTROS - Criar Votação</title>
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
@@ -27,7 +27,7 @@ unset($_SESSION['erros_votacao']);
 
 <header class="topo">
     <img src="images/fatec.png" class="logotop">
-    <h1>Criar Votação</h1>
+    <h1>Sistema de Votação para representante de sala</h1>
     <img src="images/cps.png" class="logotop">
 </header>
 

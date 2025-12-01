@@ -49,7 +49,7 @@ $totalVotos = (int)$sqlTotal->fetch()['total'];
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="shortcut icon" href="images/favicon.png" type="image/x-icon">
-    <title>ASTROS - Sistema De Votação</title>
+    <title>ASTROS - Votos</title>
     <link rel="stylesheet" href="style.css">
     <style>
         .box-votos-nulos {
@@ -82,7 +82,7 @@ $totalVotos = (int)$sqlTotal->fetch()['total'];
 <div id="tudo">
     <header class="topo">
         <img src="images/fatec.png" class="logotop">
-        <h1>Votação Para Representante de Sala</h1>
+        <h1>Sistema de Votação para representante de sala</h1>
         <img src="images/cps.png" class="logotop">
     </header>
 
