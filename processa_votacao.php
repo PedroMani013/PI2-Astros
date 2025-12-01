@@ -78,35 +78,45 @@ $datafimStr = $data_final . " 23:59:59";
 $ativa = "sim";
 
 try {
+    // Inicia transação
+    $pdo->beginTransaction();
+    
+    // Insere votação
     $stmt = $pdo->prepare("
         INSERT INTO tb_votacoes 
         (curso, semestre, ativa, data_inicio, data_candidatura, data_final, idadmin)
         VALUES (?, ?, ?, ?, ?, ?, ?)
     ");
 
-    if ($stmt->execute([$curso, $semestre, $ativa, $datainicioStr, $datacandStr, $datafimStr, $idadmin])) {
-        
-        $idvotacao = $pdo->lastInsertId();
+    $stmt->execute([$curso, $semestre, $ativa, $datainicioStr, $datacandStr, $datafimStr, $idadmin]);
+    
+    $idvotacao = $pdo->lastInsertId();
 
-        // Vincula alunos à votação
-        $upd = $pdo->prepare("
-            UPDATE tb_alunos 
-            SET idvotacao = ?
-            WHERE curso = ? AND semestre = ?
-        ");
-        $upd->execute([$idvotacao, $curso, $semestre]);
+    // *** NOVO: Cria candidato de voto nulo específico para esta votação ***
+    $stmtNulo = $pdo->prepare("
+        INSERT INTO tb_candidatos (nomealuno, ra, email, idvotacao, imagem)
+        VALUES ('VOTO NULO', '0000000000000', 'nulo@sistema.local', ?, NULL)
+    ");
+    $stmtNulo->execute([$idvotacao]);
 
-        $_SESSION['sucesso_votacao'] = "Votação criada com sucesso!";
-        header("Location: paineladministrativo.php");
-        exit;
-        
-    } else {
-        $_SESSION['erros_votacao'] = ["Erro ao criar votação no banco de dados."];
-        header("Location: criarvotacao.php");
-        exit;
-    }
+    // Vincula alunos à votação
+    $upd = $pdo->prepare("
+        UPDATE tb_alunos 
+        SET idvotacao = ?
+        WHERE curso = ? AND semestre = ?
+    ");
+    $upd->execute([$idvotacao, $curso, $semestre]);
+
+    // Confirma transação
+    $pdo->commit();
+
+    $_SESSION['sucesso_votacao'] = "Votação criada com sucesso!";
+    header("Location: paineladministrativo.php");
+    exit;
     
 } catch (PDOException $e) {
+    // Reverte transação em caso de erro
+    $pdo->rollBack();
     error_log("Erro ao criar votação: " . $e->getMessage());
     $_SESSION['erros_votacao'] = ["Erro no sistema. Por favor, contate o administrador."];
     header("Location: criarvotacao.php");

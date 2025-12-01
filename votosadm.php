@@ -18,17 +18,19 @@ $sql = $pdo->prepare("
     SELECT c.idcandidato, c.nomealuno, c.ra, c.email,
         (SELECT COUNT(*) FROM tb_votos v WHERE v.idcandidato = c.idcandidato) AS total_votos
     FROM tb_candidatos c
-    WHERE c.idvotacao = ? AND c.idcandidato != 0
+    WHERE c.idvotacao = ? AND c.nomealuno != 'VOTO NULO'
     ORDER BY c.nomealuno ASC
 ");
 $sql->execute([$idvotacao]);
 $candidatos = $sql->fetchAll(PDO::FETCH_ASSOC);
 
-// Buscar quantidade de votos nulos
+// Buscar quantidade de votos nulos DESTA votação
 $sqlNulo = $pdo->prepare("
-    SELECT COUNT(*) as total_nulos FROM tb_votos WHERE idcandidato = 0
+    SELECT COUNT(*) as total_nulos FROM tb_votos v
+    INNER JOIN tb_candidatos c ON v.idcandidato = c.idcandidato
+    WHERE c.idvotacao = ? AND c.nomealuno = 'VOTO NULO'
 ");
-$sqlNulo->execute();
+$sqlNulo->execute([$idvotacao]);
 $votosNulos = (int)$sqlNulo->fetch()['total_nulos'];
 
 // Buscar total de votos (incluindo nulos)

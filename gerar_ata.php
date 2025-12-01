@@ -33,7 +33,7 @@ $sql = $pdo->prepare("
     SELECT c.idcandidato, c.nomealuno, c.ra,
         (SELECT COUNT(*) FROM tb_votos v WHERE v.idcandidato = c.idcandidato) AS total_votos
     FROM tb_candidatos c
-    WHERE c.idvotacao = ? AND c.idcandidato != 0
+    WHERE c.idvotacao = ? AND c.nomealuno != 'VOTO NULO'
     ORDER BY total_votos DESC, c.nomealuno ASC
     LIMIT 2
 ");

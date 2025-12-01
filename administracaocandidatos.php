@@ -25,7 +25,7 @@ if (!$votacao) {
 // Busca candidatos (EXCLUINDO o candidato especial ID=0)
 $stmt = $pdo->prepare("
     SELECT * FROM tb_candidatos 
-    WHERE idvotacao = ? AND idcandidato != 0
+    WHERE idvotacao = ? AND nomealuno != 'VOTO NULO'
     ORDER BY nomealuno ASC
 ");
 $stmt->execute([$idvotacao]);

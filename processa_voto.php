@@ -46,13 +46,18 @@ if ((int)$stmt->fetch()['total'] > 0) {
 
 // Valida o candidato
 if ($voto_nulo) {
-    // Para voto nulo, verifica se o candidato especial (ID=0) existe
-    $stmt = $pdo->prepare("SELECT idcandidato FROM tb_candidatos WHERE idcandidato = 0");
-    $stmt->execute();
-    if (!$stmt->fetch()) {
-        die("Erro: Sistema de voto nulo não configurado. Contate o administrador.");
+    // Para voto nulo, busca o candidato especial desta votação específica
+    $stmt = $pdo->prepare("
+        SELECT idcandidato FROM tb_candidatos 
+        WHERE idvotacao = ? AND nomealuno = 'VOTO NULO'
+    ");
+    $stmt->execute([$idvotacao]);
+    $candidatoNulo = $stmt->fetch();
+    
+    if (!$candidatoNulo) {
+        die("Erro: Sistema de voto nulo não configurado para esta votação.");
     }
-    $idcandidato = 0; // Garante que será 0
+    $idcandidato = $candidatoNulo['idcandidato'];
 } else {
     // Para voto normal, verifica se candidato pertence à votação
     $stmt = $pdo->prepare("SELECT idvotacao FROM tb_candidatos WHERE idcandidato = ?");

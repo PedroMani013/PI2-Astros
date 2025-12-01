@@ -29,7 +29,7 @@ $sql = $pdo->prepare("
     SELECT c.idcandidato, c.nomealuno, c.ra, c.email,
         (SELECT COUNT(*) FROM tb_votos v WHERE v.idcandidato = c.idcandidato) AS total_votos
     FROM tb_candidatos c
-    WHERE c.idvotacao = ? AND c.idcandidato != 0
+    WHERE c.idvotacao = ? AND c.nomealuno != 'VOTO NULO'
     ORDER BY total_votos DESC, c.nomealuno ASC
     LIMIT 2
 ");
@@ -41,21 +41,22 @@ $representante = $vencedores[0] ?? null;
 $suplente = $vencedores[1] ?? null;
 
 // Total de votos válidos (excluindo nulos)
+// Total de votos válidos (excluindo nulos)
 $sqlTotal = $pdo->prepare("
     SELECT COUNT(*) as total FROM tb_votos v
-    WHERE v.idcandidato IN (
-        SELECT idcandidato FROM tb_candidatos 
-        WHERE idvotacao = ? AND idcandidato != 0
-    )
+    INNER JOIN tb_candidatos c ON v.idcandidato = c.idcandidato
+    WHERE c.idvotacao = ? AND c.nomealuno != 'VOTO NULO'
 ");
 $sqlTotal->execute([$idvotacao]);
 $totalVotos = (int)$sqlTotal->fetch()['total'];
 
-// Votos nulos
+// Votos nulos DESTA votação
 $sqlNulos = $pdo->prepare("
-    SELECT COUNT(*) as total FROM tb_votos WHERE idcandidato = 0
+    SELECT COUNT(*) as total FROM tb_votos v
+    INNER JOIN tb_candidatos c ON v.idcandidato = c.idcandidato
+    WHERE c.idvotacao = ? AND c.nomealuno = 'VOTO NULO'
 ");
-$sqlNulos->execute();
+$sqlNulos->execute([$idvotacao]);
 $votosNulos = (int)$sqlNulos->fetch()['total'];
 
 // Total geral (válidos + nulos)

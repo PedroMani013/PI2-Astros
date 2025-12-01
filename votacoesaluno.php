@@ -63,18 +63,19 @@ if (!$aluno) {
             $status = 'encerrada';
         }
 
-        // Verifica se já votou (qualquer candidato dessa votação)
+        // Verifica se já votou (qualquer candidato dessa votação) - CORRIGIDO
         $stmt = $pdo->prepare("
             SELECT COUNT(*) as total FROM tb_votos v
-            JOIN tb_candidatos c ON v.idcandidato = c.idcandidato
-            WHERE v.idaluno = ? AND c.idvotacao = ?
+            WHERE v.idaluno = ? AND v.idcandidato IN (
+                SELECT idcandidato FROM tb_candidatos WHERE idvotacao = ?
+            )
         ");
         $stmt->execute([$idaluno, $idvotacao]);
         $already = (int)$stmt->fetch()['total'];
 
         // Busca candidatos (apenas se votação não foi finalizada)
         if ($vot['ativa'] === 'sim') {
-            $stmt = $pdo->prepare("SELECT idcandidato, nomealuno, ra FROM tb_candidatos WHERE idvotacao = ? AND idcandidato != 0");
+            $stmt = $pdo->prepare("SELECT idcandidato, nomealuno, ra FROM tb_candidatos WHERE idvotacao = ? AND nomealuno != 'VOTO NULO'");
             $stmt->execute([$idvotacao]);
             $candidatos = $stmt->fetchAll(PDO::FETCH_ASSOC);
         }
