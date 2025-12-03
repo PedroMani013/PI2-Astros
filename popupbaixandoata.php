@@ -57,7 +57,7 @@ unset($_SESSION['ata_gerada']);
     <div id="tudo">
         <header class="topo">
             <img src="images/fatec.png" alt="Logo FATEC" class="logotop">
-            <h1>Sistema de Votação para representante de sala</h1>
+            <h1>Sistema de Eleição para Representante de Sala</h1>
             <img src="images/cps.png" alt="Logo Cps" class="logotop">
         </header>
         
