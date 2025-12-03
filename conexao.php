@@ -5,11 +5,11 @@ $host = 'localhost';   // Servidor do banco
 $db = 'astros';      // Nome do banco
 $user = 'root';        // Usuário
 $pass = '';            // Senha (Assumindo que é vazia no XAMPP)
-$port = '3306';
+$port = '3307';
 $charset = 'utf8mb4';  // Conjunto de caracteres
 
 // String de conexão (DSN)
-$dsn = "mysql:host=$host;dbname=$db;port=3306;charset=$charset";
+$dsn = "mysql:host=$host;dbname=$db;port=3307;charset=$charset";
 
 // Opções de configuração do PDO
 $options = [
