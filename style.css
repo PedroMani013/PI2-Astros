@@ -888,33 +888,6 @@ main {
     color: #A9FF98;
 }
 
-/* Popup esqueceu a senha */
-
-#forgpasspopup {
-    background-color: #EDC5C6;
-    width: 85%;
-    margin: 2% auto;
-    border-radius: 1vh;
-    text-align: center;
-    height: auto;
-}
-
-#forgpasspopup p {
-    font-size: 2rem;
-    padding: 2vh;
-}
-
-#forgpasspopup span {
-    font-size: 1.7rem;
-    padding: 15px;
-}
-
-.invisible{
-    color: #EDC5C6;
-}
-
-/* lista Alunos */
-
 /* Lista Alunos */
 
 #listavotos {
@@ -1048,12 +1021,12 @@ main {
 }
 
 /* Botão confirmar (vermelho) */
-.overlay .popup button[id*="confirmar"] {
+.overlay .popup button[id="confirmar"] {
     background-color: #a32024;
     color: white;
 }
 
-.overlay .popup button[id*="confirmar"]:hover {
+.overlay .popup button[id="confirmar"]:hover {
     background-color: #7c1619;
 }
 

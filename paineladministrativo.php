@@ -115,7 +115,7 @@ $votacoes = $stmt->fetchAll(PDO::FETCH_ASSOC);
             Esta ação não pode ser desfeita.
         </p>
 
-        <button id="confirmarRemocaoVot" style="margin-top:15px;">
+        <button id="confirmar" style="margin-top:15px;">
             CONFIRMAR REMOÇÃO
         </button>
         <button id="cancelarRemocaoVot" style="margin-top:10px; background-color:#6c757d;">
