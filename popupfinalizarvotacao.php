@@ -24,11 +24,6 @@ if (!$votacao) {
     die("Votação não encontrada.");
 }
 
-// Verificar se já está finalizada
-if ($votacao['ativa'] === 'não') {
-    die("Esta votação já foi finalizada.");
-}
-
 // Buscar os 2 candidatos mais votados (EXCLUINDO o candidato especial ID=0)
 $sql = $pdo->prepare("
     SELECT c.idcandidato, c.nomealuno, c.ra, c.email,
@@ -103,6 +98,16 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         </header>
 
         <main class="index">
+            <?php if ($votacao['ativa'] === 'não'): ?>
+                <div class="greenpopup">
+                    <img src="images/monitor.png" alt="Sucesso">
+                    <h2>Votação já foi finalizada</h2>
+                    <h3>Os votos foram computados com sucesso</h3>
+                    <p><a href="paineladministrativo.php">Clique Aqui para voltar para o painel administrativo</a></p>
+                    <span>.</span>
+                </div>
+                <?php exit; ?>
+            <?php endif; ?>
             <?php if (isset($finalizado) && $finalizado): ?>
                 <!-- Popup de sucesso (já existe no seu sistema) -->
                 <div class="greenpopup">
