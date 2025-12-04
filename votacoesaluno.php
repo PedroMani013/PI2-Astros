@@ -11,7 +11,7 @@ if (!isset($_SESSION['aluno'])) {
 $idaluno = (int)$_SESSION['aluno']['idaluno'];
 
 // Busca aluno e idvotacao
-$stmt = $pdo->prepare("SELECT idvotacao, nome, curso, semestre FROM tb_alunos WHERE idaluno = ?");
+$stmt = $pdo->prepare("SELECT idvotacao, nome, curso, semestre, ra FROM tb_alunos WHERE idaluno = ?");
 $stmt->execute([$idaluno]);
 $aluno = $stmt->fetch();
 
@@ -20,6 +20,7 @@ $status = '';
 $vot = null;
 $candidatos = [];
 $already = 0;
+$jaCandidato = false; // NOVO: flag para verificar se já é candidato
 
 if (!$aluno) {
     $mensagem = "Aluno não encontrado.";
@@ -30,7 +31,7 @@ if (!$aluno) {
 } else {
     $idvotacao = (int)$aluno['idvotacao'];
 
-    // ALTERAÇÃO: Busca votação COM os nomes do representante e suplente
+    // Busca votação COM os nomes do representante e suplente
     $stmt = $pdo->prepare("
         SELECT v.*, 
                c_rep.nomealuno as nome_representante,
@@ -63,7 +64,15 @@ if (!$aluno) {
             $status = 'encerrada';
         }
 
-        // Verifica se já votou (qualquer candidato dessa votação) - CORRIGIDO
+        // NOVO: Verifica se o aluno JÁ É CANDIDATO nesta votação
+        $stmtCand = $pdo->prepare("
+            SELECT COUNT(*) as total FROM tb_candidatos 
+            WHERE idvotacao = ? AND ra = ? AND nomealuno != 'VOTO NULO'
+        ");
+        $stmtCand->execute([$idvotacao, $aluno['ra']]);
+        $jaCandidato = (int)$stmtCand->fetch()['total'] > 0;
+
+        // Verifica se já votou (qualquer candidato dessa votação)
         $stmt = $pdo->prepare("
             SELECT COUNT(*) as total FROM tb_votos v
             WHERE v.idaluno = ? AND v.idcandidato IN (
@@ -91,9 +100,18 @@ if (!$aluno) {
     <title>ASTROS - Votações</title>
     <link rel="stylesheet" href="style.css">
     <style>
-        
         .votacao-finalizada-badge {
             background-color: #a32024;
+            color: white;
+            padding: 8px 15px;
+            border-radius: 20px;
+            display: inline-block;
+            margin: 10px 0;
+            font-weight: bold;
+        }
+        
+        .ja-candidato-badge {
+            background-color: #147C0E;
             color: white;
             padding: 8px 15px;
             border-radius: 20px;
@@ -132,8 +150,6 @@ if (!$aluno) {
                     <?php if ($vot['ativa'] === 'não'): ?>
                         <!-- VOTAÇÃO FINALIZADA - MOSTRAR RESULTADOS -->
                         
-                        
-
                         <?php if ($vot['nome_representante']): ?>
                             <div class="resultado-eleicao">
                                 <p><strong>Representante Eleito: </strong><?= htmlspecialchars($vot['nome_representante']) ?></p>
@@ -145,8 +161,9 @@ if (!$aluno) {
                                 <p><strong>Suplente Eleito:</strong> <?= htmlspecialchars($vot['nome_suplente']) ?></p>
                             </div>
                         <?php endif; ?>
+                        
                         <div class="votacao-finalizada-badge">
-                            ✓ Votação Finalizada
+                            ✔ Votação Finalizada
                         </div>
 
                     <?php else: ?>
@@ -154,13 +171,26 @@ if (!$aluno) {
                         
                         <p><strong>Candidatos:</strong> <?= count($candidatos) ?></p>
 
+                        <!-- NOVO: Mostra badge se já for candidato -->
+                        <?php if ($jaCandidato): ?>
+                            <div class="ja-candidato-badge">
+                                ✓ Você já está cadastrado como candidato
+                            </div>
+                        <?php endif; ?>
+
                         <div class="botaocaixavotacao">
                             <?php if ($status === 'antes_candidatura'): ?>
                                 <a href="#" class="btn-disabled">Candidatar</a>
                                 <a href="#" class="btn-disabled">Votar</a>
+                                
                             <?php elseif ($status === 'periodo_candidatura'): ?>
-                                <a href="candidatura.php?idvotacao=<?= $idvotacao ?>" class="btn-active">Candidatar</a>
+                                <?php if ($jaCandidato): ?>
+                                    <a href="#" class="btn-disabled">Já é candidato</a>
+                                <?php else: ?>
+                                    <a href="candidatura.php?idvotacao=<?= $idvotacao ?>" class="btn-active">Candidatar</a>
+                                <?php endif; ?>
                                 <a href="#" class="btn-disabled">Votar</a>
+                                
                             <?php elseif ($status === 'periodo_votacao'): ?>
                                 <a href="#" class="btn-disabled">Candidatar</a>
                                 <?php if ($already): ?>
@@ -168,6 +198,7 @@ if (!$aluno) {
                                 <?php else: ?>
                                     <a href="areaeleicao.php?idvotacao=<?= $idvotacao ?>" class="btn-active">Votar</a>
                                 <?php endif; ?>
+                                
                             <?php else: ?>
                                 <a href="#" class="btn-disabled">Candidatar</a>
                                 <a href="#" class="btn-disabled">Votar</a>
