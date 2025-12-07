@@ -120,6 +120,10 @@ unset($_SESSION['erro_candidatura']);
                 <p id="nomeArquivo" style="font-size: 0.9rem; color: #333; margin-top: 10px; font-style: italic;">
                     Nenhum arquivo selecionado
                 </p>
+                
+                <p style="font-size: 0.85rem; color: #a32024; margin-top: 5px; font-weight: bold;">
+                    * Campo obrigatório
+                </p>
 
                 <input type="submit" value="Enviar Candidatura">
             </form>
@@ -139,7 +143,37 @@ unset($_SESSION['erro_candidatura']);
     </footer>
 </div>
 
+<!-- POPUP DE CONFIRMAÇÃO DE CANDIDATURA -->
+<div id="popupOverlayCandidatura" class="overlay" style="display:none;">
+    <div class="popup">
+        <img src="images/alert-triangle.png" alt="Alerta" class="popup-icon">
+        <h2>Confirmação de Candidatura</h2>
+        <p id="mensagemCandidatura">
+            Tem certeza que deseja enviar sua candidatura?<br><br>
+            <strong>Após a confirmação, não será possível editar ou remover sua candidatura.</strong><br><br>
+            Seus dados:
+        </p>
+        <div id="dadosCandidatura" style="background-color: #f0f0f0; padding: 15px; border-radius: 8px; margin: 15px 0; text-align: left;">
+            <p style="margin: 5px 0;"><strong>Nome:</strong> <span id="popupNome"></span></p>
+            <p style="margin: 5px 0;"><strong>Email:</strong> <span id="popupEmail"></span></p>
+            <p style="margin: 5px 0;"><strong>RA:</strong> <span id="popupRA"></span></p>
+            <p style="margin: 5px 0;"><strong>Foto:</strong> <span id="popupFoto"></span></p>
+        </div>
+        <button id="confirmarCandidatura" style="margin-top:15px;">
+            CONFIRMAR CANDIDATURA
+        </button>
+        <button id="cancelarCandidatura" style="margin-top:10px; background-color:#6c757d;">
+            CANCELAR
+        </button>
+    </div>
+</div>
+
 <script>
+const overlayCandidatura = document.getElementById("popupOverlayCandidatura");
+const formCandidatura = document.getElementById("formCandidatura");
+const confirmarBtn = document.getElementById("confirmarCandidatura");
+const cancelarBtn = document.getElementById("cancelarCandidatura");
+
 // Mostra o nome do arquivo selecionado
 document.getElementById('foto').addEventListener('change', function(e) {
     const nomeArquivo = document.getElementById('nomeArquivo');
@@ -154,25 +188,52 @@ document.getElementById('foto').addEventListener('change', function(e) {
     }
 });
 
-// Validação antes de enviar
-document.getElementById('formCandidatura').addEventListener('submit', function(e) {
-    const foto = document.getElementById('foto');
+// Intercepta o envio do formulário
+formCandidatura.addEventListener('submit', function(e) {
+    e.preventDefault(); // Impede o envio imediato
     
+    const foto = document.getElementById('foto');
+    const nome = document.querySelector('input[name="nomealuno"]').value;
+    const email = document.querySelector('input[name="email"]').value;
+    const ra = document.querySelector('input[name="ra"]').value;
+    
+    // Validações
     if (!foto.files || !foto.files[0]) {
-        e.preventDefault();
         alert('Por favor, selecione uma foto antes de enviar.');
         return false;
     }
     
-    // Verifica tamanho
     if (foto.files[0].size > 5 * 1024 * 1024) {
-        e.preventDefault();
         alert('A foto não pode ter mais de 5MB.');
         return false;
     }
     
-    // Confirma envio
-    return confirm('Confirma o envio da sua candidatura? Após confirmado, não será possível editar.');
+    // Preenche dados no popup
+    document.getElementById('popupNome').textContent = nome;
+    document.getElementById('popupEmail').textContent = email;
+    document.getElementById('popupRA').textContent = ra;
+    document.getElementById('popupFoto').textContent = foto.files[0].name;
+    
+    // Mostra o popup
+    overlayCandidatura.style.display = "flex";
+});
+
+// Fechar popup clicando no fundo
+overlayCandidatura.addEventListener("click", function(e) {
+    if (e.target === overlayCandidatura) {
+        overlayCandidatura.style.display = "none";
+    }
+});
+
+// Botão cancelar
+cancelarBtn.addEventListener("click", function() {
+    overlayCandidatura.style.display = "none";
+});
+
+// Confirmar candidatura - envia o formulário
+confirmarBtn.addEventListener("click", function() {
+    overlayCandidatura.style.display = "none";
+    formCandidatura.submit(); // Agora sim envia o formulário
 });
 </script>
 
