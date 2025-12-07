@@ -126,7 +126,7 @@ VALUES (
     'sim',
     '2025-11-30 00:00:00',
     '2025-11-28 00:00:00',
-    '2025-12-04 23:59:59',
+    '2025-12-09 23:59:59',
     1,
     NULL,
     NULL
@@ -140,7 +140,7 @@ VALUES (
     'sim',
     '2025-11-29 00:00:00',
     '2025-11-28 00:00:00',
-    '2025-12-12 23:59:59',
+    '2025-12-14 23:59:59',
     1,
     NULL,
     NULL
@@ -180,18 +180,18 @@ WHERE curso = 'Gestão Empresarial' AND semestre = 1;
 -- Os IDs serão 3, 4, 5 (pois 1 e 2 são os votos nulos)
 INSERT INTO tb_candidatos (imagem, nomealuno, email, ra, idvotacao)
 VALUES 
-(NULL, 'Lucas Ferreira', 'lucas.ferreira@fatec.sp.gov.br', '2780642613001', 2),
-(NULL, 'Mariana Duarte', 'mariana.duarte@fatec.sp.gov.br', '2780642613002', 2),
-(NULL, 'Ricardo Alves', 'ricardo.alves@fatec.sp.gov.br', '2780642613003', 2);
+(LOAD_FILE('C:/Users/Usuario/Downloads/fotos_candidatos/lucas_ferreira.jpg'), 'Lucas Ferreira', 'lucas.ferreira@fatec.sp.gov.br', '2780642613001', 2),
+(LOAD_FILE('C:/Users/Usuario/Downloads/fotos_candidatos/mariana_duarte.jpg'), 'Mariana Duarte', 'mariana.duarte@fatec.sp.gov.br', '2780642613002', 2),
+(LOAD_FILE('C:/Users/Usuario/Downloads/fotos_candidatos/ricardo_alves.jpg'), 'Ricardo Alves', 'ricardo.alves@fatec.sp.gov.br', '2780642613003', 2);
 
 -- Candidatos de DSM (idvotacao = 1)
 -- Os IDs serão 6, 7, 8, 9
 INSERT INTO tb_candidatos (imagem, nomealuno, email, ra, idvotacao)
 VALUES 
-(NULL, 'Carlos Nogueira', 'carlos.nogueira@fatec.sp.gov.br', '2781392613001', 1),
-(NULL, 'Luis Porfirio', 'luis.porfirio@fatec.sp.gov.br', '2781392613002', 1),
-(NULL, 'Henrique Costa', 'henrique.costa@fatec.sp.gov.br', '2781392613003', 1),
-(NULL, 'Natália Silva', 'natalia.silva@fatec.sp.gov.br', '2781392613004', 1);
+(LOAD_FILE('C:/Users/Usuario/Downloads/fotos_candidatos/carlos_nogueira.jpg'), 'Carlos Nogueira', 'carlos.nogueira@fatec.sp.gov.br', '2781392613001', 1),
+(LOAD_FILE('C:/Users/Usuario/Downloads/fotos_candidatos/luis_porfirio.jpeg'), 'Luis Porfirio', 'luis.porfirio@fatec.sp.gov.br', '2781392613002', 1),
+(LOAD_FILE('C:/Users/Usuario/Downloads/fotos_candidatos/henrique_costa.jpg'), 'Henrique Costa', 'henrique.costa@fatec.sp.gov.br', '2781392613003', 1),
+(LOAD_FILE('C:/Users/Usuario/Downloads/fotos_candidatos/natalia_silva.jpg'), 'Natália Silva', 'natalia.silva@fatec.sp.gov.br', '2781392613004', 1);
 
 -- ============================================
 -- 5. INSERIR VOTOS - GESTÃO EMPRESARIAL
