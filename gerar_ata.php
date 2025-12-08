@@ -28,7 +28,7 @@ if (!$votacao) {
     die("Votação não encontrada.");
 }
 
-// Buscar os 2 candidatos mais votados (EXCLUINDO votos nulos)
+// Buscar vencedores
 $sql = $pdo->prepare("
     SELECT c.idcandidato, c.nomealuno, c.ra,
         (SELECT COUNT(*) FROM tb_votos v WHERE v.idcandidato = c.idcandidato) AS total_votos
@@ -40,23 +40,21 @@ $sql = $pdo->prepare("
 $sql->execute([$idvotacao]);
 $vencedores = $sql->fetchAll(PDO::FETCH_ASSOC);
 
-// Buscar alunos que votaram nesta votação (incluindo votos nulos)
+// Buscar alunos votantes (INCLUINDO votos nulos corretamente)
 $sqlVotantes = $pdo->prepare("
     SELECT DISTINCT a.nome, a.ra
     FROM tb_alunos a
     INNER JOIN tb_votos v ON a.idaluno = v.idaluno
-    INNER JOIN tb_candidatos c ON v.idcandidato = c.idcandidato
-    WHERE c.idvotacao = ?
+    WHERE a.idvotacao = ?
     ORDER BY a.nome ASC
 ");
 $sqlVotantes->execute([$idvotacao]);
 $votantes = $sqlVotantes->fetchAll(PDO::FETCH_ASSOC);
 
-// Separar representante e suplente
+// Representante e suplente
 $representante = $vencedores[0] ?? null;
 $suplente = $vencedores[1] ?? null;
 
-// Preparar dados para o PDF
 $semestre = $votacao['semestre'];
 $curso = strtoupper(utf8_decode($votacao['curso']));
 $dataFinal = new DateTime($votacao['data_final']);
@@ -69,99 +67,110 @@ $RAeleito = $representante ? $representante['ra'] : "N/A";
 $suplenteNome = $suplente ? utf8_decode($suplente['nomealuno']) : "NAO HOUVE SUPLENTE ELEITO";
 $RAsuplente = $suplente ? $suplente['ra'] : "N/A";
 
-// Criar PDF usando FPDI
+// Criar PDF
 $pdf = new Fpdi();
-
-// Arquivo modelo
 $modelo = __DIR__ . '/Ata_PDF/Modelopdf/modelo_de_ata.pdf';
 
-// Verifica se o arquivo modelo existe
 if (!file_exists($modelo)) {
     die("Erro: Arquivo modelo não encontrado em: " . $modelo);
 }
 
 try {
-    // Importa modelo - PÁGINA 1
     $pageCount = $pdf->setSourceFile($modelo);
     $tpl = $pdf->importPage(1);
 
-    // Cria primeira página
     $pdf->AddPage();
     $pdf->useTemplate($tpl, 0, 0);
 
-    // ========== TEXTO DA ATA ==========
+    // Texto
     $pdf->SetFont('helvetica', '', 11);
     $pdf->SetTextColor(0, 0, 0);
-
-    // Posicionamento do texto (no espaço em branco entre cabeçalho e tabela)
-    $pdf->SetXY(20, 55);
+    $pdf->SetXY(20, 50);
 
     $texto = "ATA DE ELEICAO DE REPRESENTANTES DE TURMA DO {$semestre}o SEMESTRE DE {$dataano}, DO CURSO DE TECNOLOGIA EM {$curso} DA FACULDADE DE TECNOLOGIA DE ITAPIRA \"OGARI DE CASTRO PACHECO\". Ao dia {$datafinal}, foram apurados os votos dos alunos regularmente matriculados no {$semestre}o semestre de {$dataano} do Curso Superior de Tecnologia em {$curso} para eleicao de novos representantes de turma. Os representantes eleitos fazem a representacao dos alunos nos orgaos colegiados da Faculdade, com direito a voz e voto, conforme o disposto no artigo 69 da Deliberacao CEETEPS no 07, de 15 de dezembro de 2006. Foi eleito(a) como representante o(a) aluno(a) {$eleito}, R.A. no {$RAeleito} e eleito como vice o(a) aluno(a) {$suplenteNome}, R.A. no {$RAsuplente}. A presente ata, apos leitura e concordancia, sera assinada por todos os alunos participantes. Itapira, {$datafinal}.";
 
     $pdf->MultiCell(170, 6, $texto, 0, 'J', 0);
+    $pdf->Ln(10);
 
-    // ========== PREENCHER TABELA ==========
+    // ==========================================
+    //              TABELA CENTRALIZADA
+    // ==========================================
     if (!empty($votantes)) {
+
+        // Larguras
+        $w1 = 15;
+        $w2 = 75;
+        $w3 = 35;
+        $w4 = 45;
+
+        // <<< CENTRALIZAR >>>
+        $larguraTotal = $w1 + $w2 + $w3 + $w4;
+        $Xcentral = (210 - $larguraTotal) / 2; // 210mm = largura PDF A4
+
+        // Cabeçalho
+        $pdf->SetFont('helvetica', 'B', 10);
+        $pdf->SetFillColor(202, 202, 202);
+
+        $pdf->SetX($Xcentral);
+        $pdf->Cell($w1, 8, utf8_decode('Nº'), 1, 0, 'C', true);
+        $pdf->Cell($w2, 8, 'NOME', 1, 0, 'C', true);
+        $pdf->Cell($w3, 8, 'R.A COMPLETO', 1, 0, 'C', true);
+        $pdf->Cell($w4, 8, 'ASSINATURA', 1, 1, 'C', true);
+
+        // Linhas
         $pdf->SetFont('helvetica', '', 9);
-        
-        // Posições das colunas (baseado na tabela do modelo)
-        $xNome = 25;      // Posição X da coluna NOME
-        $xRA = 116;       // Posição X da coluna R.A
-        
-        // Altura da linha
-        $alturaLinha = 9.8;
-        
-        // ===== PÁGINA 1: Linhas 1-18 =====
-        $yInicial = 110; // Posição Y da primeira linha de dados
-        $yAtual = $yInicial;
-        
+        $pdf->SetFillColor(255, 255, 255);
+
         $contador = 1;
-        
-        foreach ($votantes as $index => $votante) {
-            // Se passou de 18 linhas, vai para página 2
-            if ($contador > 18 && $contador <= 48) {
-                if ($contador == 19) {
-                    // Importa e cria página 2
-                    if ($pageCount >= 2) {
-                        $tpl2 = $pdf->importPage(2);
-                        $pdf->AddPage();
-                        $pdf->useTemplate($tpl2, 0, 0);
-                        $yAtual = 47; // Posição inicial na página 2
-                        $pdf->SetFont('helvetica', '', 9);
-                    }
+        $linhasPagina1 = 0;
+
+        foreach ($votantes as $votante) {
+
+            if ($linhasPagina1 >= 20 && $contador > 20) {
+                if ($pageCount >= 2) {
+
+                    $tpl2 = $pdf->importPage(2);
+                    $pdf->AddPage();
+                    $pdf->useTemplate($tpl2, 0, 0);
+
+                    // Cabeçalho da página 2
+                    $pdf->SetFont('helvetica', 'B', 10);
+                    $pdf->SetFillColor(237, 197, 198);
+
+                    $pdf->SetX($Xcentral);
+                    $pdf->Cell($w1, 8, utf8_decode('Nº'), 1, 0, 'C', true);
+                    $pdf->Cell($w2, 8, 'NOME', 1, 0, 'C', true);
+                    $pdf->Cell($w3, 8, 'R.A COMPLETO', 1, 0, 'C', true);
+                    $pdf->Cell($w4, 8, 'ASSINATURA', 1, 1, 'C', true);
+
+                    $pdf->SetFont('helvetica', '', 9);
+                    $linhasPagina1 = 0;
                 }
             }
-            
-            // Limite máximo de 48 alunos (conforme modelo)
-            if ($contador > 48) {
-                break;
-            }
-            
-            // Preparar dados
+
             $nomeAluno = strtoupper(utf8_decode($votante['nome']));
             $raAluno = $votante['ra'];
-            
-            // Ajuste vertical para centralizar texto na célula
-            $yTexto = $yAtual + 2;
-            
-            // Coluna NOME
-            $pdf->SetXY($xNome, $yTexto);
-            $pdf->Cell(90, 5, $nomeAluno, 0, 0, 'L');
-            
-            // Coluna R.A
-            $pdf->SetXY($xRA, $yTexto);
-            $pdf->Cell(35, 5, $raAluno, 0, 0, 'C');
-            
+
+            // <<< CENTRALIZAR LINHA >>>
+            $pdf->SetX($Xcentral);
+            $pdf->Cell($w1, 7, $contador . '.', 1, 0, 'C');
+            $pdf->Cell($w2, 7, $nomeAluno, 1, 0, 'L');
+            $pdf->Cell($w3, 7, $raAluno, 1, 0, 'C');
+            $pdf->Cell($w4, 7, '', 1, 1, 'C');
+
             $contador++;
-            $yAtual += $alturaLinha;
+            $linhasPagina1++;
         }
+
+    } else {
+        $pdf->SetFont('helvetica', 'I', 10);
+        $pdf->Cell(0, 10, 'Nenhum aluno votou nesta eleicao.', 0, 1, 'C');
     }
 
-    // Nome do arquivo
+    // Salvar PDF
     $cursoLimpo = preg_replace('/[^A-Za-z0-9_\-]/', '_', $votacao['curso']);
     $nomeArquivo = "Ata_Eleicao_{$cursoLimpo}_{$semestre}Sem_{$dataano}.pdf";
 
-    // Salvar o PDF em uma pasta temporária
     $pastaTemp = __DIR__ . '/temp_pdfs/';
     if (!file_exists($pastaTemp)) {
         mkdir($pastaTemp, 0777, true);
@@ -170,7 +179,6 @@ try {
     $caminhoCompleto = $pastaTemp . $nomeArquivo;
     $pdf->Output($caminhoCompleto, 'F');
 
-    // Guardar informações na sessão para a página de popup
     $_SESSION['ata_gerada'] = [
         'arquivo' => $nomeArquivo,
         'caminho' => $caminhoCompleto,
@@ -179,11 +187,10 @@ try {
         'total_votantes' => count($votantes)
     ];
 
-    // Redirecionar para popup
     header("Location: popupbaixandoata.php?idvotacao={$idvotacao}");
     exit;
-    
+
 } catch (Exception $e) {
-    die("Erro ao processar PDF: " . $e->getMessage() . "<br><br>Solucao: O PDF pode estar com compressao nao suportada. Tente recriar o PDF ou usar uma ferramenta para descomprimi-lo.");
+    die("Erro ao processar PDF: " . $e->getMessage());
 }
 ?>
