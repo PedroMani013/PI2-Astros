@@ -86,7 +86,7 @@ VALUES
 ('Carlos Nogueira', '2781392613001', 'carlos.nogueira@fatec.sp.gov.br', 'Cn1287kk', 'Desenvolvimento de Software Multiplataforma', 1, NULL),
 ('Luis Porfirio', '2781392613002', 'luis.porfirio@fatec.sp.gov.br', '12345678', 'Desenvolvimento de Software Multiplataforma', 1, NULL),
 ('Henrique Costa', '2781392613003', 'henrique.costa@fatec.sp.gov.br', 'Hc6610mm', 'Desenvolvimento de Software Multiplataforma', 1, NULL),
-('Natalia Silva', '2781392613004', 'natalia.silva@fatec.sp.gov.br', 'Ns3118nn', 'Desenvolvimento de Software Multiplataforma', 1, NULL),
+('Natália Silva', '2781392613004', 'natalia.silva@fatec.sp.gov.br', 'Ns3118nn', 'Desenvolvimento de Software Multiplataforma', 1, NULL),
 ('Rafael Rocha', '2781392613005', 'rafael.rocha@fatec.sp.gov.br', 'Rr7094oo', 'Desenvolvimento de Software Multiplataforma', 1, NULL),
 ('Isabela Castro', '2781392613006', 'isabela.castro@fatec.sp.gov.br', 'Ic2046pp', 'Desenvolvimento de Software Multiplataforma', 1, NULL),
 ('Bruno Teixeira', '2781392613007', 'bruno.teixeira@fatec.sp.gov.br', 'Bt7745qq', 'Desenvolvimento de Software Multiplataforma', 1, NULL),
