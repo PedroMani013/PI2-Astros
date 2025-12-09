@@ -40,12 +40,13 @@ $sql = $pdo->prepare("
 $sql->execute([$idvotacao]);
 $vencedores = $sql->fetchAll(PDO::FETCH_ASSOC);
 
-// Buscar alunos votantes (INCLUINDO votos nulos corretamente)
+// ✅ CORRIGIDO: Buscar TODOS os alunos votantes (incluindo quem votou nulo)
 $sqlVotantes = $pdo->prepare("
     SELECT DISTINCT a.nome, a.ra
     FROM tb_alunos a
     INNER JOIN tb_votos v ON a.idaluno = v.idaluno
-    WHERE a.idvotacao = ?
+    INNER JOIN tb_candidatos c ON v.idcandidato = c.idcandidato
+    WHERE c.idvotacao = ?
     ORDER BY a.nome ASC
 ");
 $sqlVotantes->execute([$idvotacao]);
@@ -56,15 +57,49 @@ $representante = $vencedores[0] ?? null;
 $suplente = $vencedores[1] ?? null;
 
 $semestre = $votacao['semestre'];
-$curso = strtoupper(utf8_decode($votacao['curso']));
+
+// ✅ CORRIGIDO: Melhor tratamento de encoding para evitar corrupção
+// Remove acentos do curso para o PDF
+$curso_original = $votacao['curso'];
+$curso = mb_strtoupper($curso_original, 'UTF-8');
+
+// Remove acentos: "Gestão" vira "GESTAO"
+$curso_pdf = iconv('UTF-8', 'ASCII//TRANSLIT//IGNORE', $curso);
+if ($curso_pdf === false || empty($curso_pdf)) {
+    $curso_pdf = str_replace(
+        ['Á', 'É', 'Í', 'Ó', 'Ú', 'Â', 'Ê', 'Ô', 'Ã', 'Õ', 'Ç', 'À'],
+        ['A', 'E', 'I', 'O', 'U', 'A', 'E', 'O', 'A', 'O', 'C', 'A'],
+        $curso
+    );
+}
+
 $dataFinal = new DateTime($votacao['data_final']);
 $datafinal = $dataFinal->format('d/m/Y');
 $dataano = $dataFinal->format('Y');
 
-$eleito = $representante ? utf8_decode($representante['nomealuno']) : "NAO HOUVE CANDIDATO ELEITO";
+// ✅ CORRIGIDO: Remove acentos dos nomes para evitar problemas no PDF
+$eleito = $representante ? mb_strtoupper($representante['nomealuno'], 'UTF-8') : "NAO HOUVE CANDIDATO ELEITO";
+$eleito = iconv('UTF-8', 'ASCII//TRANSLIT//IGNORE', $eleito);
+if ($eleito === false || empty($eleito)) {
+    $eleito = $representante ? 
+        str_replace(
+            ['Á', 'É', 'Í', 'Ó', 'Ú', 'Â', 'Ê', 'Ô', 'Ã', 'Õ', 'Ç', 'À'],
+            ['A', 'E', 'I', 'O', 'U', 'A', 'E', 'O', 'A', 'O', 'C', 'A'],
+            mb_strtoupper($representante['nomealuno'], 'UTF-8')
+        ) : "NAO HOUVE CANDIDATO ELEITO";
+}
 $RAeleito = $representante ? $representante['ra'] : "N/A";
 
-$suplenteNome = $suplente ? utf8_decode($suplente['nomealuno']) : "NAO HOUVE SUPLENTE ELEITO";
+$suplenteNome = $suplente ? mb_strtoupper($suplente['nomealuno'], 'UTF-8') : "NAO HOUVE SUPLENTE ELEITO";
+$suplenteNome = iconv('UTF-8', 'ASCII//TRANSLIT//IGNORE', $suplenteNome);
+if ($suplenteNome === false || empty($suplenteNome)) {
+    $suplenteNome = $suplente ? 
+        str_replace(
+            ['Á', 'É', 'Í', 'Ó', 'Ú', 'Â', 'Ê', 'Ô', 'Ã', 'Õ', 'Ç', 'À'],
+            ['A', 'E', 'I', 'O', 'U', 'A', 'E', 'O', 'A', 'O', 'C', 'A'],
+            mb_strtoupper($suplente['nomealuno'], 'UTF-8')
+        ) : "NAO HOUVE SUPLENTE ELEITO";
+}
 $RAsuplente = $suplente ? $suplente['ra'] : "N/A";
 
 // Criar PDF
@@ -87,14 +122,12 @@ try {
     $pdf->SetTextColor(0, 0, 0);
     $pdf->SetXY(20, 50);
 
-    $texto = "ATA DE ELEICAO DE REPRESENTANTES DE TURMA DO {$semestre}o SEMESTRE DE {$dataano}, DO CURSO DE TECNOLOGIA EM {$curso} DA FACULDADE DE TECNOLOGIA DE ITAPIRA \"OGARI DE CASTRO PACHECO\". Ao dia {$datafinal}, foram apurados os votos dos alunos regularmente matriculados no {$semestre}o semestre de {$dataano} do Curso Superior de Tecnologia em {$curso} para eleicao de novos representantes de turma. Os representantes eleitos fazem a representacao dos alunos nos orgaos colegiados da Faculdade, com direito a voz e voto, conforme o disposto no artigo 69 da Deliberacao CEETEPS no 07, de 15 de dezembro de 2006. Foi eleito(a) como representante o(a) aluno(a) {$eleito}, R.A. no {$RAeleito} e eleito como vice o(a) aluno(a) {$suplenteNome}, R.A. no {$RAsuplente}. A presente ata, apos leitura e concordancia, sera assinada por todos os alunos participantes. Itapira, {$datafinal}.";
+    $texto = "ATA DE ELEICAO DE REPRESENTANTES DE TURMA DO {$semestre}o SEMESTRE DE {$dataano}, DO CURSO DE TECNOLOGIA EM {$curso_pdf} DA FACULDADE DE TECNOLOGIA DE ITAPIRA \"OGARI DE CASTRO PACHECO\". Ao dia {$datafinal}, foram apurados os votos dos alunos regularmente matriculados no {$semestre}o semestre de {$dataano} do Curso Superior de Tecnologia em {$curso_pdf} para eleicao de novos representantes de turma. Os representantes eleitos fazem a representacao dos alunos nos orgaos colegiados da Faculdade, com direito a voz e voto, conforme o disposto no artigo 69 da Deliberacao CEETEPS no 07, de 15 de dezembro de 2006. Foi eleito(a) como representante o(a) aluno(a) {$eleito}, R.A. no {$RAeleito} e eleito como vice o(a) aluno(a) {$suplenteNome}, R.A. no {$RAsuplente}. A presente ata, apos leitura e concordancia, sera assinada por todos os alunos participantes. Itapira, {$datafinal}.";
 
     $pdf->MultiCell(170, 6, $texto, 0, 'J', 0);
     $pdf->Ln(10);
 
-    // ==========================================
-    //              TABELA CENTRALIZADA
-    // ==========================================
+    // TABELA CENTRALIZADA
     if (!empty($votantes)) {
 
         // Larguras
@@ -103,16 +136,16 @@ try {
         $w3 = 35;
         $w4 = 45;
 
-        // <<< CENTRALIZAR >>>
+        // Centralizar
         $larguraTotal = $w1 + $w2 + $w3 + $w4;
-        $Xcentral = (210 - $larguraTotal) / 2; // 210mm = largura PDF A4
+        $Xcentral = (210 - $larguraTotal) / 2;
 
         // Cabeçalho
         $pdf->SetFont('helvetica', 'B', 10);
         $pdf->SetFillColor(202, 202, 202);
 
         $pdf->SetX($Xcentral);
-        $pdf->Cell($w1, 8, utf8_decode('Nº'), 1, 0, 'C', true);
+        $pdf->Cell($w1, 8, 'No', 1, 0, 'C', true);
         $pdf->Cell($w2, 8, 'NOME', 1, 0, 'C', true);
         $pdf->Cell($w3, 8, 'R.A COMPLETO', 1, 0, 'C', true);
         $pdf->Cell($w4, 8, 'ASSINATURA', 1, 1, 'C', true);
@@ -138,7 +171,7 @@ try {
                     $pdf->SetFillColor(237, 197, 198);
 
                     $pdf->SetX($Xcentral);
-                    $pdf->Cell($w1, 8, utf8_decode('Nº'), 1, 0, 'C', true);
+                    $pdf->Cell($w1, 8, 'No', 1, 0, 'C', true);
                     $pdf->Cell($w2, 8, 'NOME', 1, 0, 'C', true);
                     $pdf->Cell($w3, 8, 'R.A COMPLETO', 1, 0, 'C', true);
                     $pdf->Cell($w4, 8, 'ASSINATURA', 1, 1, 'C', true);
@@ -148,10 +181,23 @@ try {
                 }
             }
 
-            $nomeAluno = strtoupper(utf8_decode($votante['nome']));
+            // ✅ SOLUÇÃO DEFINITIVA: Converte caracteres especiais para ASCII
+            $nomeAluno = mb_strtoupper($votante['nome'], 'UTF-8');
+            
+            // Remove acentos e caracteres especiais
+            $nomeAluno = iconv('UTF-8', 'ASCII//TRANSLIT//IGNORE', $nomeAluno);
+            
+            // Se iconv falhar, usa substitutos manuais
+            if ($nomeAluno === false || empty($nomeAluno)) {
+                $nomeAluno = str_replace(
+                    ['Á', 'É', 'Í', 'Ó', 'Ú', 'Â', 'Ê', 'Ô', 'Ã', 'Õ', 'Ç', 'À'],
+                    ['A', 'E', 'I', 'O', 'U', 'A', 'E', 'O', 'A', 'O', 'C', 'A'],
+                    mb_strtoupper($votante['nome'], 'UTF-8')
+                );
+            }
+            
             $raAluno = $votante['ra'];
 
-            // <<< CENTRALIZAR LINHA >>>
             $pdf->SetX($Xcentral);
             $pdf->Cell($w1, 7, $contador . '.', 1, 0, 'C');
             $pdf->Cell($w2, 7, $nomeAluno, 1, 0, 'L');
@@ -168,7 +214,7 @@ try {
     }
 
     // Salvar PDF
-    $cursoLimpo = preg_replace('/[^A-Za-z0-9_\-]/', '_', $votacao['curso']);
+    $cursoLimpo = preg_replace('/[^A-Za-z0-9_\-]/', '_', $curso_original);
     $nomeArquivo = "Ata_Eleicao_{$cursoLimpo}_{$semestre}Sem_{$dataano}.pdf";
 
     $pastaTemp = __DIR__ . '/temp_pdfs/';
