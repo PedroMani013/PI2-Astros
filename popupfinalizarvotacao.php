@@ -85,7 +85,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>ASTROS - Votação Encerrada</title>
+    <title>ASTROS - Eleição Encerrada</title>
     <link rel="shortcut icon" href="images/favicon.png" type="image/x-icon">
     <link rel="stylesheet" href="style.css">
 </head>
@@ -101,7 +101,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             <?php if ($votacao['ativa'] === 'não'): ?>
                 <div class="greenpopup">
                     <img src="images/monitor.png" alt="Sucesso">
-                    <h2>Votação já foi finalizada</h2>
+                    <h2>Eleição já foi finalizada</h2>
                     <h3>Os votos foram computados com sucesso</h3>
                     <p><a href="paineladministrativo.php">Clique Aqui para voltar para o painel administrativo</a></p>
                     <span>.</span>
@@ -112,7 +112,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 <!-- Popup de sucesso (já existe no seu sistema) -->
                 <div class="greenpopup">
                     <img src="images/monitor.png" alt="Sucesso">
-                    <h2>VOTAÇÃO FINALIZADA!</h2>
+                    <h2>ELEIÇÃO FINALIZADA!</h2>
                     <h3>Os votos foram computados com sucesso</h3>
                     <p><a href="paineladministrativo.php">Clique Aqui para voltar para o painel administrativo</a></p>
                     <span>.</span>
@@ -144,7 +144,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                         <div class="sem-candidatos">
                             <img src="images/alert-triangle.png" alt="Alerta">
                             <h3>Não há candidatos votados nesta eleição.</h3>
-                            <p>Não é possível finalizar a votação sem vencedores.</p>
+                            <p>Não é possível finalizar a eleição sem vencedores.</p>
                         </div>
                         <div class="botoes-finalizar">
                             <a href="votosapurados.php?idvotacao=<?= $idvotacao ?>" class="btn-finalizar-cancelar">
@@ -208,8 +208,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                         <div class="aviso-importante">
                             <strong>ATENÇÃO!</strong>
                             <p>Esta ação é <strong>IRREVERSÍVEL</strong>.</p>
-                            <p>A votação será marcada como finalizada e os resultados serão publicados aos alunos.</p>
-                            <p>A votação ficará visível por mais 1 semana após o encerramento.</p>
+                            <p>A eleição será marcada como finalizada e os resultados serão publicados aos alunos.</p>
+                            <p>A eleição ficará visível por mais 1 semana após o encerramento.</p>
                         </div>
 
                         <form method="POST">

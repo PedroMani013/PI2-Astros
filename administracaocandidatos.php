@@ -98,7 +98,7 @@ $candidatos = $stmt->fetchAll(PDO::FETCH_ASSOC);
     <?php endif; ?>
 
     <div class="finalizarsessao">
-        <a href="paineladministrativo.php"><img src="images/log-out.png"> <p>Voltar Para Votações</p></a>
+        <a href="paineladministrativo.php"><img src="images/log-out.png"> <p>Voltar</p></a>
     </div>
 
 </main>

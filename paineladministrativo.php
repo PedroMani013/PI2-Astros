@@ -45,7 +45,7 @@ $votacoes = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
         <?php if (empty($votacoes)): ?>
             <p style="text-align:center; font-size:18px; margin: 20px 0;">
-                Não há votações disponíveis no momento.
+                Não há Eleições disponíveis no momento.
             </p>
         <?php else: ?>
 
@@ -77,7 +77,7 @@ $votacoes = $stmt->fetchAll(PDO::FETCH_ASSOC);
                                     data-id="<?= $v['idvotacao'] ?>"
                                     data-curso="<?= htmlspecialchars($v['curso']) ?>"
                                     data-semestre="<?= htmlspecialchars($v['semestre']) ?>">
-                                Remover Votação
+                                Remover Eleição
                             </button>
                         <?php else: ?>
                             <a href="votosapurados.php?idvotacao=<?= $v['idvotacao'] ?>">Ver Resultados Finais</a>
@@ -90,7 +90,7 @@ $votacoes = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
         <div class="criarvot">
             <a href="criarvotacao.php" class="botoesvotoadm">
-                <div class="criavot"><img src="images/addvotacao.png"><p>Criar nova votação</p></div>
+                <div class="criavot"><img src="images/addvotacao.png"><p>Criar nova Eleição</p></div>
             </a>
         </div>
         <div class="finalizarsessao">
@@ -113,9 +113,9 @@ $votacoes = $stmt->fetchAll(PDO::FETCH_ASSOC);
         <h2>Confirmação de Remoção</h2>
 
         <p>
-            Tem certeza que deseja remover a votação<br>
+            Tem certeza que deseja remover a eleição<br>
             <strong><span id="nomeVotacao"></span></strong>?<br><br>
-            ⚠️ Todos os candidatos e votos desta votação serão apagados.<br>
+            ⚠️ Todos os candidatos e votos desta eleição serão apagados.<br>
             Esta ação não pode ser desfeita.
         </p>
 

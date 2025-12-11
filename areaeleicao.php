@@ -101,7 +101,7 @@ $candidatos = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
             <?php if (empty($candidatos)): ?>
                 <p style="text-align:center; font-size:20px; margin:20px;">
-                    Não há candidatos cadastrados nesta votação.
+                    Não há candidatos cadastrados nesta eleição.
                 </p>
             <?php else: ?>
 
@@ -141,7 +141,7 @@ $candidatos = $stmt->fetchAll(PDO::FETCH_ASSOC);
             <div class="finalizarsessao">
                 <a href="votacoesaluno.php">
                     <img src="images/log-out.png" alt="">
-                    <p>Voltar Para Votações</p>
+                    <p>Voltar Para eleições</p>
                 </a>
             </div>
         </main>

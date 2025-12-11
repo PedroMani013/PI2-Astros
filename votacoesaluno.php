@@ -97,7 +97,7 @@ if (!$aluno) {
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="shortcut icon" href="images/favicon.png" type="image/x-icon">
-    <title>ASTROS - Votações</title>
+    <title>ASTROS - Eleições</title>
     <link rel="stylesheet" href="style.css">
     <style>
         .votacao-finalizada-badge {
@@ -130,7 +130,7 @@ if (!$aluno) {
     </header>
 
     <main class="boxpadrao">
-        <h1>Votação — <?= $vot ? htmlspecialchars($vot['curso']) : '—' ?></h1>
+        <h1>Eleição — <?= $vot ? htmlspecialchars($vot['curso']) : '—' ?></h1>
 
         <?php if (!empty($mensagem)): ?>
             <div class="erro"><span><?= htmlspecialchars($mensagem) ?></span></div>
@@ -138,14 +138,14 @@ if (!$aluno) {
 
             <div id="caixavotacao">
                 <div class="headcaixavotacao">
-                    <h2>Votação para representante<br>de sala e suplente</h2>
+                    <h2>Eleição para representante<br>de sala e suplente</h2>
                 </div>
 
                 <div class="maincaixavotacao">
                     <p><strong>Curso:</strong> <?= htmlspecialchars($vot['curso']) ?></p>
                     <p><strong>Semestre:</strong> <?= htmlspecialchars($vot['semestre']) ?>º</p>
                     <p><strong>Data para candidatura:</strong> <?= (new DateTime($vot['data_candidatura']))->format('d/m/Y') ?></p>
-                    <p><strong>Período de eleição:</strong> <?= (new DateTime($vot['data_inicio']))->format('d/m/Y') ?> até <?= (new DateTime($vot['data_final']))->format('d/m/Y') ?></p>
+                    <p><strong>Período de votação:</strong> <?= (new DateTime($vot['data_inicio']))->format('d/m/Y') ?> até <?= (new DateTime($vot['data_final']))->format('d/m/Y') ?></p>
 
                     <?php if ($vot['ativa'] === 'não'): ?>
                         <!-- VOTAÇÃO FINALIZADA - MOSTRAR RESULTADOS -->
@@ -163,7 +163,7 @@ if (!$aluno) {
                         <?php endif; ?>
                         
                         <div class="votacao-finalizada-badge">
-                            ✔ Votação Finalizada
+                            ✔ Eleição Finalizada
                         </div>
 
                     <?php else: ?>

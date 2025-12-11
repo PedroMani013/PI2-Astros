@@ -79,7 +79,7 @@ unset($_SESSION['ata_gerada']);
                 
                 <p style="margin-top: 20px;">
                     <a href="votosapurados.php<?= $idvotacao ? '?idvotacao=' . $idvotacao : '' ?>">
-                        Clique aqui para voltar para a votação
+                        Clique aqui para voltar para a eleição
                     </a>
                 </p>
                 <span>.</span>

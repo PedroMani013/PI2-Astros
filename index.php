@@ -23,7 +23,7 @@
                     <a href="paineladministrativo.php" class="boxlog">
                         <img src="images/book-open.png" class="imgindex" alt="bookopen">
                         <h3>Administrador</h3>
-                        <p>Cria e administra as votações, apurando votos</p>
+                        <p>Cria e administra as eleições, apurando votos</p>
                     </a>
                     <a href="votacoesaluno.php" class="boxlog">
                         <img src="images/user.png" class="imgindex" alt="user">

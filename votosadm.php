@@ -102,7 +102,7 @@ $totalVotos = (int)$sqlTotal->fetch()['total'];
             <?php if (empty($candidatos)): ?>
 
                 <p style="text-align:center; font-size:18px; width:100%; margin-top:20px;">
-                    Nenhum candidato cadastrado nesta votação.
+                    Nenhum candidato cadastrado nesta eleição.
                 </p>
 
             <?php else: ?>
@@ -142,7 +142,7 @@ $totalVotos = (int)$sqlTotal->fetch()['total'];
         <div class="finalizarsessao">
             <a href="paineladministrativo.php">
                 <img src="images/log-out.png">
-                <p>Voltar Para Votações</p>
+                <p>Voltar Para Eleições</p>
             </a>
         </div>
 

@@ -19,7 +19,7 @@ unset($_SESSION['erros_votacao']);
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="shortcut icon" href="images/favicon.png" type="image/x-icon">
-    <title>ASTROS - Criar Votação</title>
+    <title>ASTROS - Criar Eleição</title>
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
@@ -33,7 +33,7 @@ unset($_SESSION['erros_votacao']);
 
 <main class="formmain">
     <div id="formbox">
-        <h2>Nova Votação</h2>
+        <h2>Nova Eleição</h2>
         
         <?php if (!empty($erros)): ?>
             <?php foreach ($erros as $erro): ?>

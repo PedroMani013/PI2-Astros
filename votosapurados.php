@@ -138,7 +138,7 @@ $totalGeral = $totalVotos + $votosNulos;
             
             <!-- Resumo de Votos -->
             <div class="resumo-votos">
-                <h3>📊 Resumo da Votação</h3>
+                <h3>📊 Resumo da Eleição</h3>
                 <p><strong>Total de votos válidos:</strong> <?= $totalVotos ?></p>
                 <p><strong>Votos nulos:</strong> <?= $votosNulos ?></p>
                 <p><strong>Total geral:</strong> <?= $totalGeral ?></p>
@@ -198,7 +198,7 @@ $totalGeral = $totalVotos + $votosNulos;
             
             <?php else: ?>
             
-            <p class="sem-votos">⚠️ Nenhum voto foi registrado nesta votação ainda.</p>
+            <p class="sem-votos">⚠️ Nenhum voto foi registrado nesta eleição ainda.</p>
             
             <?php endif; ?>
             
@@ -209,13 +209,13 @@ $totalGeral = $totalVotos + $votosNulos;
             
             <!-- ALTERAÇÃO: Link para finalizar votação -->
             <div class="apurarvotos">
-                <p><a href="popupfinalizarvotacao.php?idvotacao=<?= $idvotacao ?>">Finalizar Votação</a></p>
+                <p><a href="popupfinalizarvotacao.php?idvotacao=<?= $idvotacao ?>">Finalizar eleição</a></p>
             </div>
             
             <div class="finalizarsessao">
                 <a href="paineladministrativo.php">
                     <img src="images/log-out.png" alt="">
-                    <p>Voltar Para Votações</p>
+                    <p>Voltar Para eleições</p>
                 </a>
             </div>
             

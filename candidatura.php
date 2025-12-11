@@ -84,7 +84,7 @@ unset($_SESSION['erro_candidatura']);
             <h2>Cadastro de Candidato</h2>
             
             <div style="background-color: #e8f4f8; padding: 15px; border-radius: 10px; margin-bottom: 20px;">
-                <p style="margin: 5px 0; font-size: 1.1rem;"><strong>Votação:</strong> <?= htmlspecialchars($vot['curso']) ?></p>
+                <p style="margin: 5px 0; font-size: 1.1rem;"><strong>Eleição:</strong> <?= htmlspecialchars($vot['curso']) ?></p>
                 <p style="margin: 5px 0; font-size: 1.1rem;"><strong>Semestre:</strong> <?= htmlspecialchars($vot['semestre']) ?>º</p>
                 <p style="margin: 5px 0; font-size: 1.1rem;"><strong>Período de candidatura até:</strong> <?= (new DateTime($vot['data_inicio']))->format('d/m/Y') ?></p>
             </div>
