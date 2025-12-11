@@ -4,7 +4,7 @@ require_once 'conexao.php';
 
 // Verificar se admin está logado
 if (!isset($_SESSION['admin'])) {
-    header('Location: logadm.php');
+    header('Location: login_adm.php');
     exit;
 }
 
@@ -209,11 +209,11 @@ $totalGeral = $totalVotos + $votosNulos;
             
             <!-- ALTERAÇÃO: Link para finalizar votação -->
             <div class="apurarvotos">
-                <p><a href="popupfinalizarvotacao.php?idvotacao=<?= $idvotacao ?>">Finalizar eleição</a></p>
+                <p><a href="popup_finalizar_eleicao.php?idvotacao=<?= $idvotacao ?>">Finalizar eleição</a></p>
             </div>
             
             <div class="finalizarsessao">
-                <a href="paineladministrativo.php">
+                <a href="painel_administrativo.php">
                     <img src="images/log-out.png" alt="">
                     <p>Voltar Para eleições</p>
                 </a>

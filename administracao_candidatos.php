@@ -3,7 +3,7 @@ session_start();
 require_once 'conexao.php';
 
 if (!isset($_SESSION['admin'])) {
-    header("Location: logadm.php");
+    header("Location: login_adm.php");
     exit;
 }
 
@@ -98,7 +98,7 @@ $candidatos = $stmt->fetchAll(PDO::FETCH_ASSOC);
     <?php endif; ?>
 
     <div class="finalizarsessao">
-        <a href="paineladministrativo.php"><img src="images/log-out.png"> <p>Voltar</p></a>
+        <a href="painel_administrativo.php"><img src="images/log-out.png"> <p>Voltar</p></a>
     </div>
 
 </main>

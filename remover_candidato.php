@@ -3,7 +3,7 @@ session_start();
 require_once 'conexao.php';
 
 if (!isset($_SESSION['admin'])) {
-    header("Location: logadm.php");
+    header("Location: login_adm.php");
     exit;
 }
 
@@ -25,6 +25,6 @@ $pdo->prepare("DELETE FROM tb_votos WHERE idcandidato = ?")->execute([$id]);
 // Remover o candidato
 $pdo->prepare("DELETE FROM tb_candidatos WHERE idcandidato = ?")->execute([$id]);
 
-header("Location: administracaocandidatos.php?idvotacao=$idvotacao&msg=removido");
+header("Location: administracao_candidatos.php?idvotacao=$idvotacao&msg=removido");
 exit;
 ?>

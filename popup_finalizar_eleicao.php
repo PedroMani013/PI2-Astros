@@ -4,7 +4,7 @@ require_once 'conexao.php';
 
 // Verificar se é administrador
 if (!isset($_SESSION['admin'])) {
-    header('Location: logadm.php');
+    header('Location: login_adm.php');
     exit;
 }
 
@@ -103,7 +103,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                     <img src="images/monitor.png" alt="Sucesso">
                     <h2>Eleição já foi finalizada</h2>
                     <h3>Os votos foram computados com sucesso</h3>
-                    <p><a href="paineladministrativo.php">Clique Aqui para voltar para o painel administrativo</a></p>
+                    <p><a href="painel_administrativo.php">Clique Aqui para voltar para o painel administrativo</a></p>
                     <span>.</span>
                 </div>
                 <?php exit; ?>
@@ -114,7 +114,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                     <img src="images/monitor.png" alt="Sucesso">
                     <h2>ELEIÇÃO FINALIZADA!</h2>
                     <h3>Os votos foram computados com sucesso</h3>
-                    <p><a href="paineladministrativo.php">Clique Aqui para voltar para o painel administrativo</a></p>
+                    <p><a href="painel_administrativo.php">Clique Aqui para voltar para o painel administrativo</a></p>
                     <span>.</span>
                 </div>
 
@@ -128,7 +128,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                             <span><?= htmlspecialchars($erro) ?></span>
                         </div>
                         <div class="botoes-finalizar">
-                            <a href="votosapurados.php?idvotacao=<?= $idvotacao ?>" class="btn-finalizar-cancelar">
+                            <a href="votos_apurados.php?idvotacao=<?= $idvotacao ?>" class="btn-finalizar-cancelar">
                                 Voltar
                             </a>
                         </div>
@@ -147,7 +147,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                             <p>Não é possível finalizar a eleição sem vencedores.</p>
                         </div>
                         <div class="botoes-finalizar">
-                            <a href="votosapurados.php?idvotacao=<?= $idvotacao ?>" class="btn-finalizar-cancelar">
+                            <a href="votos_apurados.php?idvotacao=<?= $idvotacao ?>" class="btn-finalizar-cancelar">
                                 Voltar
                             </a>
                         </div>
@@ -214,7 +214,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
                         <form method="POST">
                             <div class="botoes-finalizar">
-                                <a href="votosapurados.php?idvotacao=<?= $idvotacao ?>" class="btn-finalizar-cancelar">
+                                <a href="votos_apurados.php?idvotacao=<?= $idvotacao ?>" class="btn-finalizar-cancelar">
                                     Cancelar
                                 </a>
                                 <button type="submit" class="btn-finalizar-confirmar">

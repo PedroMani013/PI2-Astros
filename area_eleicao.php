@@ -4,7 +4,7 @@ require_once 'conexao.php';
 date_default_timezone_set('America/Sao_Paulo');
 
 if (!isset($_SESSION['aluno'])) {
-    header('Location: logaluno.php');
+    header('Location: login_aluno.php');
     exit;
 }
 
@@ -139,7 +139,7 @@ $candidatos = $stmt->fetchAll(PDO::FETCH_ASSOC);
             </div>
 
             <div class="finalizarsessao">
-                <a href="votacoesaluno.php">
+                <a href="eleicoes_aluno.php">
                     <img src="images/log-out.png" alt="">
                     <p>Voltar Para eleições</p>
                 </a>

@@ -4,7 +4,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>ASTROS - Candidatura Aprovada</title>
+    <title>ASTROS - Voto Concluido</title>
     <link rel="shortcut icon" href="images/favicon.png" type="image/x-icon">
     <link rel="stylesheet" href="style.css">
 </head>
@@ -18,10 +18,10 @@
         </header>
         <main>
             <div class="greenpopup">
-                <img src="images/edit.png">
-                <h2>CANDIDATURA APROVADA!</h2>
-                <h3>Sua inscrição foi realizada com sucesso</h3>
-                <p><a href="votacoesaluno.php">Clique Aqui para voltar para as eleições</a></p>
+                <img src="images/checkmark.png">
+                <h2>VOTAÇÃO CONCLUIDA!</h2>
+                <h3>Seu voto foi computado</h3>
+                <p><a href="votacoes_aluno.php">Clique Aqui para voltar para a página inicial</a></p>
                 <span>.</span>
             </div> 
         </main>

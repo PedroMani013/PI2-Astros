@@ -8,7 +8,7 @@ use setasign\Fpdi\Tcpdf\Fpdi;
 
 // Verifica se admin está logado
 if (!isset($_SESSION['admin'])) {
-    header('Location: logadm.php');
+    header('Location: login_adm.php');
     exit;
 }
 
@@ -233,7 +233,7 @@ try {
         'total_votantes' => count($votantes)
     ];
 
-    header("Location: popupbaixandoata.php?idvotacao={$idvotacao}");
+    header("Location: popup_baixando_ata.php?idvotacao={$idvotacao}");
     exit;
 
 } catch (Exception $e) {

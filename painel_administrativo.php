@@ -4,7 +4,7 @@ require_once 'conexao.php';
 date_default_timezone_set('America/Sao_Paulo');
 
 if (!isset($_SESSION['admin'])) {
-    header('Location: logadm.php');
+    header('Location: login_adm.php');
     exit;
 }
 
@@ -71,8 +71,8 @@ $votacoes = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
                     <div class="botoesvotoadm">
                         <?php if ($v['ativa'] === 'sim'): ?>
-                            <a href="administracaocandidatos.php?idvotacao=<?= $v['idvotacao'] ?>">Ver candidatos</a>
-                            <a href="votosadm.php?idvotacao=<?= $v['idvotacao'] ?>">Visualizar votos</a>
+                            <a href="administracao_candidatos.php?idvotacao=<?= $v['idvotacao'] ?>">Ver candidatos</a>
+                            <a href="votos_adm.php?idvotacao=<?= $v['idvotacao'] ?>">Visualizar votos</a>
                             <button class="botaoremovot remover-votacao-btn"
                                     data-id="<?= $v['idvotacao'] ?>"
                                     data-curso="<?= htmlspecialchars($v['curso']) ?>"
@@ -80,7 +80,7 @@ $votacoes = $stmt->fetchAll(PDO::FETCH_ASSOC);
                                 Remover Eleição
                             </button>
                         <?php else: ?>
-                            <a href="votosapurados.php?idvotacao=<?= $v['idvotacao'] ?>">Ver Resultados Finais</a>
+                            <a href="votos_apurados.php?idvotacao=<?= $v['idvotacao'] ?>">Ver Resultados Finais</a>
                         <?php endif; ?>
                     </div>
                 </div>
@@ -89,7 +89,7 @@ $votacoes = $stmt->fetchAll(PDO::FETCH_ASSOC);
         <?php endif; ?>
 
         <div class="criarvot">
-            <a href="criarvotacao.php" class="botoesvotoadm">
+            <a href="criar_eleicao.php" class="botoesvotoadm">
                 <div class="criavot"><img src="images/addvotacao.png"><p>Criar nova Eleição</p></div>
             </a>
         </div>
@@ -165,7 +165,7 @@ cancelarVotBtn.addEventListener("click", function() {
 // Confirmar remoção
 confirmarVotBtn.addEventListener("click", function() {
     if (idSelecionadoVot) {
-        window.location.href = "remocaovot.php?idvotacao=" + idSelecionadoVot;
+        window.location.href = "remocao_vot.php?idvotacao=" + idSelecionadoVot;
     }
 });
 </script>

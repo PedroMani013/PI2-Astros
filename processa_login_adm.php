@@ -13,34 +13,34 @@ if (isset($_POST['email'], $_POST['password'])) {
 
     try {
         // Busca o usuário pelo email
-        $sql = "SELECT idaluno, nome, senha FROM tb_alunos WHERE email = ?";
+        $sql = "SELECT idadmin, nome, senha FROM tb_administradores WHERE email = ?";
         $stmt = $pdo->prepare($sql);
         $stmt->execute([$email]);
         
-        $aluno = $stmt->fetch();
+        $admin = $stmt->fetch();
 
-        if ($aluno && $senha === $aluno['senha']) {
+        if ($admin && $senha === $admin['senha']) {
             // Login bem-sucedido
-            $_SESSION['aluno'] = [
-                'idaluno' => $aluno['idaluno'],
-                'nome' => $aluno['nome']
+            $_SESSION['admin'] = [
+                'idadmin' => $admin['idadmin'],
+                'nome' => $admin['nome']
             ];
-            header('Location: votacoesaluno.php');
+            header('Location: painel_administrativo.php');
             exit;
         } else {
             // Login falhou
             $_SESSION['erro_login'] = "Email ou senha inválidos";
-            header('Location: logaluno.php');
+            header('Location: login_adm.php');
             exit;
         }
         
     } catch (PDOException $e) {
         $_SESSION['erro_login'] = "Erro ao processar login";
-        header('Location: logaluno.php');
+        header('Location: login_adm.php');
         exit;
     }
 } else {
     $_SESSION['erro_login'] = "Por favor, preencha todos os campos";
-    header('Location: logaluno.php');
+    header('Location: login_adm.php');
     exit;
 }

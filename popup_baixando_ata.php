@@ -3,7 +3,7 @@ session_start();
 
 // Verifica se há uma ata gerada
 if (!isset($_SESSION['ata_gerada'])) {
-    header('Location: paineladministrativo.php');
+    header('Location: painel_administrativo.php');
     exit;
 }
 
@@ -78,7 +78,7 @@ unset($_SESSION['ata_gerada']);
                 </a>
                 
                 <p style="margin-top: 20px;">
-                    <a href="votosapurados.php<?= $idvotacao ? '?idvotacao=' . $idvotacao : '' ?>">
+                    <a href="votos_apurados.php<?= $idvotacao ? '?idvotacao=' . $idvotacao : '' ?>">
                         Clique aqui para voltar para a eleição
                     </a>
                 </p>

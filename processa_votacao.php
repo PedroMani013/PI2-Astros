@@ -8,7 +8,7 @@ if (!isset($_SESSION['admin'])) {
 }
 
 if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
-    header("Location: criarvotacao.php");
+    header("Location: criar_eleicao.php");
     exit;
 }
 
@@ -46,7 +46,7 @@ if (!$data_final) {
 // Se já tem erros básicos, retorna
 if (!empty($erros)) {
     $_SESSION['erros_votacao'] = $erros;
-    header("Location: criarvotacao.php");
+    header("Location: criar_eleicao.php");
     exit;
 }
 
@@ -65,7 +65,7 @@ if ($datainicio >= $datafim) {
 
 if (!empty($erros)) {
     $_SESSION['erros_votacao'] = $erros;
-    header("Location: criarvotacao.php");
+    header("Location: criar_eleicao.php");
     exit;
 }
 
@@ -111,7 +111,7 @@ try {
     $pdo->commit();
 
     $_SESSION['sucesso_votacao'] = "Votação criada com sucesso!";
-    header("Location: paineladministrativo.php");
+    header("Location: painel_administrativo.php");
     exit;
     
 } catch (PDOException $e) {
@@ -119,7 +119,7 @@ try {
     $pdo->rollBack();
     error_log("Erro ao criar votação: " . $e->getMessage());
     $_SESSION['erros_votacao'] = ["Erro no sistema. Por favor, contate o administrador."];
-    header("Location: criarvotacao.php");
+    header("Location: criar_eleicao.php");
     exit;
 }
 ?>

@@ -4,11 +4,11 @@ require_once 'conexao.php';
 date_default_timezone_set('America/Sao_Paulo');
 
 if (!isset($_SESSION['aluno'])) {
-    header('Location: logaluno.php');
+    header('Location: login_aluno.php');
     exit;
 }
 if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
-    header('Location: votacoesaluno.php');
+    header('Location: eleicoes_aluno.php');
     exit;
 }
 
@@ -72,7 +72,7 @@ if ($voto_nulo) {
 $stmt = $pdo->prepare("INSERT INTO tb_votos (datavoto, idaluno, idcandidato) VALUES (NOW(), ?, ?)");
 if ($stmt->execute([$idaluno, $idcandidato])) {
     // Redireciona para página de confirmação de voto
-    header('Location: popupvotoconcluido.php');
+    header('Location: popup_voto_concluido.php');
     exit;
 } else {
     die("Erro ao registrar voto.");

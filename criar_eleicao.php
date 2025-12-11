@@ -4,7 +4,7 @@ require_once 'conexao.php';
 date_default_timezone_set('America/Sao_Paulo');
 
 if (!isset($_SESSION['admin'])) {
-    header('Location: logadm.php');
+    header('Location: login_adm.php');
     exit;
 }
 
@@ -78,7 +78,7 @@ unset($_SESSION['erros_votacao']);
     </div>
 
     <div class="finalizarsessao">
-        <a href="paineladministrativo.php"><img src="images/log-out.png"> <p>Voltar</p></a>
+        <a href="painel_administrativo.php"><img src="images/log-out.png"> <p>Voltar</p></a>
     </div>
 </main>
 

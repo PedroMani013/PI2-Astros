@@ -4,7 +4,7 @@ require_once 'conexao.php';
 date_default_timezone_set('America/Sao_Paulo');
 
 if (!isset($_SESSION['aluno'])) {
-    header('Location: logaluno.php');
+    header('Location: login_aluno.php');
     exit;
 }
 
@@ -196,7 +196,7 @@ if (!$aluno) {
                                 <?php if ($already): ?>
                                     <a href="#" class="btn-disabled">Você já votou</a>
                                 <?php else: ?>
-                                    <a href="areaeleicao.php?idvotacao=<?= $idvotacao ?>" class="btn-active">Votar</a>
+                                    <a href="area_eleicao.php?idvotacao=<?= $idvotacao ?>" class="btn-active">Votar</a>
                                 <?php endif; ?>
                                 
                             <?php else: ?>

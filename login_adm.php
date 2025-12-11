@@ -4,14 +4,13 @@ session_start();
 
 ?>
 
-
 <!DOCTYPE html>
 <html lang="pt-br">
 
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>ASTROS - Login Aluno</title>
+    <title>ASTROS - Login Admin</title>
     <link rel="shortcut icon" href="images/favicon.png" type="image/x-icon">
     <link rel="stylesheet" href="style.css">
 </head>
@@ -38,13 +37,12 @@ require_once 'conexao.php';
                     </div>
                 <?php endif; ?>
                 <div class="loginhead">
-                    <img src="images/user_login.png" alt="user">
+                    <img src="images/livro.png" alt="book">
                     <h2>LOGIN</h2>
-                    <h3>Portal do aluno</h3>
-
+                    <h3>Portal do administrador</h3>
                 </div>
-                <form action="processalogaluno.php" method="post" class="loginbody">
-                    <input type="email" name="email" id="email" placeholder="Login (Email)" required>
+                <form action="processa_login_adm.php" method="post" class="loginbody">
+                    <input type="email" name="email" id="" placeholder="Login (e-mail)" required>
                     <input type="password" name="password" id="" placeholder="Senha" required>
                     <input type="submit" value="Entrar">
                 </form>

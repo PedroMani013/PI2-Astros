@@ -5,13 +5,13 @@ date_default_timezone_set('America/Sao_Paulo');
 
 // Verifica se o aluno está logado
 if (!isset($_SESSION['aluno'])) {
-    header('Location: logaluno.php');
+    header('Location: login_aluno.php');
     exit;
 }
 
 // Verifica se é POST
 if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
-    header('Location: votacoesaluno.php');
+    header('Location: votacoes_aluno.php');
     exit;
 }
 
@@ -125,7 +125,7 @@ try {
     
     if ($sucesso) {
         // Redireciona para página de sucesso
-        header('Location: popupcandidatura.php');
+        header('Location: popup_candidatura.php');
         exit;
     } else {
         redirecionarComErro($idvotacao, "Erro ao cadastrar candidatura. Tente novamente.");

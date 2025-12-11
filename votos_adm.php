@@ -3,7 +3,7 @@ session_start();
 require_once "conexao.php";
 
 if (!isset($_SESSION['admin'])) {
-    header("Location: logadm.php");
+    header("Location: login_adm.php");
     exit;
 }
 
@@ -136,11 +136,11 @@ $totalVotos = (int)$sqlTotal->fetch()['total'];
         <?php endif; ?>
 
         <div class="apurarvotos">
-            <p><a href="votosapurados.php?idvotacao=<?= $idvotacao ?>">Apurar Votos</a></p>
+            <p><a href="votos_apurados.php?idvotacao=<?= $idvotacao ?>">Apurar Votos</a></p>
         </div>
 
         <div class="finalizarsessao">
-            <a href="paineladministrativo.php">
+            <a href="painel_administrativo.php">
                 <img src="images/log-out.png">
                 <p>Voltar Para Eleições</p>
             </a>
